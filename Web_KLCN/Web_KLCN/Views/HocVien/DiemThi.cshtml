@@ -1,0 +1,51 @@
+﻿@model List<Web_KLCN.Models.HocVienDiemThiVM>
+@{
+    ViewBag.Title = "Điểm thi";
+    Layout = "~/Views/Shared/LayoutPage2.cshtml";
+}
+
+<div class="container py-4 fade-in">
+
+    <h3 class="fw-bold mb-4" style="color:#1800AC;">📊 Lịch sử điểm thi</h3>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning text-center">
+            Bạn chưa có bài thi nào!
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered shadow-sm rounded-4 overflow-hidden">
+            <thead class="text-white" style="background:#1800AC;">
+                <tr>
+                    <th>Môn</th>
+                    <th>Đề thi</th>
+                    <th>Điểm</th>
+                    <th>Số câu đúng</th>
+                    <th>Ngày thi</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Mon</td>
+                        <td>@item.TenDe</td>
+                        <td class="fw-bold">@item.Diem</td>
+                        <td>@item.SoCauDung</td>
+                        @(item.NgayThi.HasValue ? item.NgayThi.Value.ToString("dd/MM/yyyy") : "")
+                        <td>
+                            <a href="@Url.Action("XemLaiBaiLam", "HocVien", new { id = item.MaKQ })"
+                               class="btn btn-sm btn-outline-primary rounded-3">
+                                <i class="fa-solid fa-eye me-2"></i>Xem lại
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

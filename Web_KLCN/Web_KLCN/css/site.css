@@ -1,0 +1,128 @@
+﻿body {
+}
+
+:root {
+    --primary: #1800AC; /* 💙 Màu chủ đạo */
+    --dark: #343a40;
+    --light: #f8f9fa;
+    --shadow: 0 5px 15px rgba(0, 0, 0, .08);
+    --shadow-hover: 0 15px 35px rgba(0, 0, 0, .15);
+}
+
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-weight: 900;
+    font-size: 1.8rem;
+}
+
+.navbar-fixed {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1030;
+    background: #fff !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+    transition: all .3s;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url('https://images.unsplash.com/photo-1524178232363-64cc13c7cd93?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+
+/* Service Cards */
+.service-card {
+    transition: all .3s;
+    border: none;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+}
+
+    .service-card:hover {
+        transform: translateY(-10px) !important;
+        box-shadow: var(--shadow-hover) !important;
+    }
+
+.service-icon {
+    font-size: 3.5rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+/* Sections */
+.section-padding {
+    padding: 80px 0;
+}
+
+.bg-light-alt {
+    background: var(--light);
+}
+
+/* Features */
+.features-item {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+    .features-item:last-child {
+        border-bottom: none;
+    }
+
+.features-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-right: 1rem;
+}
+
+/* CTA */
+.cta-section {
+    background: var(--primary) !important;
+    color: #fff;
+    text-align: center;
+    padding: 80px 0;
+}
+
+/* Footer */
+footer {
+    background: var(--dark) !important;
+    color: #fff;
+}
+
+.social a {
+    color: #fff !important;
+    transition: all .3s;
+    font-size: 1.3rem;
+}
+
+    .social a:hover {
+        color: var(--primary) !important;
+        transform: translateY(-3px);
+    }
+
+/* Utilities */
+.shadow {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .1) !important;
+}
+
+.btn-lg-custom {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+}

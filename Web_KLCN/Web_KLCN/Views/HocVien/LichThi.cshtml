@@ -1,0 +1,67 @@
+﻿@model List<Web_KLCN.Models.HocVienLichThiVM>
+@{
+    ViewBag.Title = "Lịch thi của tôi";
+    Layout = "~/Views/Shared/LayoutPage2.cshtml";
+}
+
+<div class="container py-4 fade-in">
+
+    <h3 class="fw-bold mb-4" style="color:#1800AC;">Lịch thi của bạn</h3>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Bạn hiện chưa có lịch thi nào.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6">
+                    <div class="card border-0 shadow rounded-4 h-100 hover-card">
+                        <div class="card-body">
+
+                            <h5 class="fw-bold mb-2">@item.TenDe</h5>
+                            <p class="text-muted mb-1">
+                                <i class="fa-solid fa-book me-2"></i>@item.Mon
+                            </p>
+
+                            <p class="mb-1">
+                                <i class="fa-solid fa-calendar me-2 text-primary"></i>
+                                <b>Ngày thi:</b> @item.NgayThi.ToString("dd/MM/yyyy")
+                            </p>
+
+                            <p class="mb-3">
+                                <i class="fa-solid fa-clock me-2 text-primary"></i>
+                                <b>Thời gian:</b> @item.GioBatDau → @item.GioKetThuc
+                            </p>
+
+                            <div class="d-flex justify-content-between">
+                                <span class="badge bg-secondary">@item.TrangThai</span>
+
+                                <a href="@Url.Action("LamBai", "HocVien", new { id = item.MaLT })"
+                                   class="btn btn-primary rounded-3">
+                                    Vào thi <i class="fa-solid fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .hover-card {
+        transition: .25s;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,.1) !important;
+        }
+</style>

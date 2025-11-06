@@ -1,0 +1,14 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutPage2.cshtml";
+    ViewBag.Title = "Kết quả thi";
+}
+
+<div class="container text-center py-5">
+    <h2 class="fw-bold text-success mb-3">Nộp bài thành công!</h2>
+    <p class="fs-5">Bạn đã làm đúng <strong>@ViewBag.SoCauDung</strong> câu.</p>
+    <p class="fs-4 text-primary">Điểm: <strong>@ViewBag.Diem</strong></p>
+
+    <div class="mt-4">
+        <a href="@Url.Action("DiemThi","HocVien")" class="btn btn-lg text-white px-5" style="background:#1800AC;">Xem bảng điểm</a>
+    </div>
+</div>

@@ -1,0 +1,326 @@
+﻿@model Web_KLCN.Models.BaiThiViewModel
+@{
+    ViewBag.Title = "Làm bài thi";
+    Layout = "~/Views/Shared/LayoutPage2.cshtml";
+}
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #f9faff;
+    }
+
+    .exam-container {
+        display: flex;
+        height: 100%;
+    }
+
+    /* ==== Sidebar (Danh sách câu hỏi) ==== */
+    .sidebar {
+        width: 260px;
+        background: #fff;
+        border-right: 1px solid #ddd;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+        .sidebar h5 {
+            font-weight: 700;
+            color: #1800AC;
+            margin-bottom: 20px;
+        }
+
+    .question-list {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+    }
+
+    .question-btn {
+        border: none;
+        border-radius: 8px;
+        height: 36px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        color: #fff;
+    }
+
+        .question-btn.current {
+            background: #1800AC !important;
+            color: #fff !important;
+            box-shadow: 0 0 0 2px #1800AC44;
+        }
+
+        .question-btn.answered {
+            background: #28a745;
+        }
+
+        .question-btn.unanswered {
+            background: #d6d6d6;
+            color: #333;
+        }
+
+    .legend small {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .legend span {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+    }
+
+    .legend .current {
+        background: #1800AC;
+    }
+
+    .legend .answered {
+        background: #28a745;
+    }
+
+    .legend .unanswered {
+        background: #d6d6d6;
+    }
+
+    /* ==== Main content ==== */
+    .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 30px;
+        background: #fff;
+    }
+
+    .exam-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .timer-box {
+        padding: 8px 14px;
+        border: 2px solid #1800AC;
+        border-radius: 10px;
+        color: #1800AC;
+        font-weight: bold;
+    }
+
+    .question-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .answer-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: 0.25s;
+        cursor: pointer;
+    }
+
+        .answer-item:hover,
+        .answer-item.selected {
+            background: #f3f4ff;
+            border-color: #1800AC;
+        }
+
+    .bottom-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 15px;
+        border-top: 1px solid #ddd;
+    }
+
+    .btn-nav {
+        background: #1800AC;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: 0.25s;
+    }
+
+        .btn-nav:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+    .btn-submit {
+        background: #28a745;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 25px;
+    }
+
+        .btn-submit:hover {
+            background: #28a745 !important;
+            opacity: 0.9;
+        }
+
+    .status-info {
+        color: #555;
+        font-size: 15px;
+    }
+</style>
+
+<div class="exam-container">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h5>Danh sách câu hỏi</h5>
+        <div class="question-list">
+            @for (int i = 0; i < Model.CauHoiList.Count; i++)
+            {
+                <button type="button"
+                        class="question-btn unanswered"
+                        data-index="@i"
+                        data-mach="@Model.CauHoiList[i].MaCH">
+                    @(i + 1)
+                </button>
+            }
+        </div>
+
+        <div class="legend mt-3">
+            <small><span class="current"></span> Câu hiện tại</small>
+            <small><span class="answered"></span> Đã trả lời</small>
+            <small><span class="unanswered"></span> Chưa trả lời</small>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="exam-header">
+            <div>
+                <h4 class="fw-bold" style="color:#1800AC;">@Model.TenBaiThi</h4>
+                <p class="text-muted mb-0">Môn: @Model.MonHoc • Thời gian: @Model.ThoiGian phút</p>
+            </div>
+            <div class="timer-box">
+                <i class="fa-solid fa-clock me-2"></i>
+                <span id="countdown">@Model.ThoiGian:00</span>
+            </div>
+        </div>
+
+        <form action="@Url.Action("NopBai","HocVien")" method="post" id="form-thi">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="MaLT" value="@Model.MaLT" />
+
+            @for (int i = 0; i < Model.CauHoiList.Count; i++)
+            {
+                var c = Model.CauHoiList[i];
+                <div class="question-area d-none" id="question-@i">
+                    <h5 class="fw-bold mb-3">Câu @(i + 1): @c.NoiDung</h5>
+
+                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="A" /> A. @c.DapAnA</label>
+                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="B" /> B. @c.DapAnB</label>
+                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="C" /> C. @c.DapAnC</label>
+                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="D" /> D. @c.DapAnD</label>
+                </div>
+            }
+
+            <div class="bottom-bar">
+                <div>
+                    <button type="button" id="btnPrev" class="btn-nav">⬅ Câu trước</button>
+                    <button type="button" id="btnNext" class="btn-nav">Câu tiếp theo ➡</button>
+                </div>
+
+                <div class="status-info">
+                    Còn lại: <span id="remaining"></span> câu chưa làm
+                </div>
+
+                <button type="submit" class="btn btn-submit">Nộp bài</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+    const total = @Model.CauHoiList.Count;
+    let current = 0;
+
+    const questions = document.querySelectorAll(".question-area");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const qBtns = document.querySelectorAll(".question-btn");
+    const remainingSpan = document.getElementById("remaining");
+
+    function updateUI() {
+        questions.forEach((q, i) => q.classList.toggle("d-none", i !== current));
+        qBtns.forEach((b, i) => {
+            b.classList.remove("current");
+            if (i === current) b.classList.add("current");
+        });
+
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+
+        const answered = document.querySelectorAll(".question-btn.answered").length;
+        remainingSpan.textContent = total - answered;
+    }
+
+    btnPrev.onclick = () => { current--; updateUI(); };
+    btnNext.onclick = () => { current++; updateUI(); };
+
+    qBtns.forEach((b, i) => {
+        b.onclick = () => { current = i; updateUI(); };
+    });
+
+    document.querySelectorAll(".answer-item input").forEach(radio => {
+        radio.addEventListener("change", function () {
+            const group = this.name;
+            const mach = group.split("_")[1];
+            const btn = Array.from(qBtns).find(b => b.dataset.mach === mach);
+            btn.classList.remove("unanswered");
+            btn.classList.add("answered");
+
+            document.querySelectorAll(`input[name='${group}']`).forEach(i => i.parentElement.classList.remove("selected"));
+            this.parentElement.classList.add("selected");
+
+            updateUI();
+        });
+    });
+
+    // ========== Đếm ngược ==========
+    let t = @Model.ThoiGian * 60;
+    const countdown = document.getElementById("countdown");
+    const timer = setInterval(() => {
+        let m = Math.floor(t / 60);
+        let s = t % 60;
+        countdown.textContent = `${m}:${s < 10 ? "0" + s : s}`;
+        t--;
+        if (t < 0) {
+            clearInterval(timer);
+            document.getElementById("form-thi").submit();
+        }
+    }, 1000);
+
+    // ========== Popup xác nhận ==========
+    document.getElementById("form-thi").addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (confirm("Bạn có chắc muốn nộp bài không?")) {
+            clearInterval(timer);
+            alert("Nộp bài thành công! Hệ thống đang xử lý kết quả...");
+            this.submit();
+        }
+    });
+
+    // Khởi tạo
+    updateUI();
+    </script>
+}
