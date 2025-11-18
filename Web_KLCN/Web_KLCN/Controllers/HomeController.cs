@@ -17,7 +17,7 @@ namespace Web_KLCN.Controllers
         }
 
         // ================================
-        // 1️⃣ Trang chủ công khai
+        // 1️. Trang chủ
         // ================================
         public ActionResult Index()
         {
@@ -30,7 +30,7 @@ namespace Web_KLCN.Controllers
         }
 
         // ================================
-        // 2️⃣ Đăng nhập học viên
+        // 2️. Đăng nhập học viên
         // ================================
         [HttpGet]
         public ActionResult Login()
@@ -94,7 +94,7 @@ namespace Web_KLCN.Controllers
         }
 
         // ================================
-        // 3️⃣ Đăng xuất
+        // 3️. Đăng xuất
         // ================================
         public ActionResult Logout()
         {
@@ -102,5 +102,78 @@ namespace Web_KLCN.Controllers
             Session.Abandon();
             return RedirectToAction("Index");
         }
+
+        // ================================
+        // 4️. Đăng ký học viên
+        // ================================
+        [HttpGet]
+        public ActionResult Register()
+        {
+            // Nếu đã đăng nhập thì chuyển sang trang học viên
+            if (Session["MaTK"] != null)
+                return RedirectToAction("Index", "HocVien");
+
+            ViewData["Title"] = "Đăng ký học viên";
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Register(string taiKhoan, string matKhau, string xacNhanMatKhau, string hoTen)
+        {
+            ViewData["Title"] = "Đăng ký học viên";
+
+            // 1️. Kiểm tra đầu vào
+            if (string.IsNullOrWhiteSpace(taiKhoan) || string.IsNullOrWhiteSpace(matKhau) || string.IsNullOrWhiteSpace(hoTen))
+            {
+                ViewBag.Error = "Vui lòng nhập đầy đủ thông tin!";
+                return View();
+            }
+
+            if (matKhau != xacNhanMatKhau)
+            {
+                ViewBag.Error = "Mật khẩu xác nhận không khớp!";
+                return View();
+            }
+
+            // 2️. Kiểm tra tài khoản đã tồn tại chưa
+            var existingUser = db.TAIKHOANs.FirstOrDefault(t => t.TaiKhoan1 == taiKhoan);
+            if (existingUser != null)
+            {
+                ViewBag.Error = "Tài khoản đã tồn tại!";
+                return View();
+            }
+
+            // 3️. Lấy mã phân quyền học viên
+            var pqHocVien = db.PHANQUYENs.FirstOrDefault(p => p.LoaiPQ.Trim().ToLower() == "học viên");
+            if (pqHocVien == null)
+            {
+                ViewBag.Error = "Không tìm thấy phân quyền học viên!";
+                return View();
+            }
+
+            // 4️. Tạo tài khoản mới
+            var taiKhoanMoi = new TAIKHOAN
+            {
+                TaiKhoan1 = taiKhoan,
+                MatKhau = matKhau,
+                MaPQ = pqHocVien.MaPQ,
+                TrangThai = "Hoạt động"
+            };
+            db.TAIKHOANs.InsertOnSubmit(taiKhoanMoi);
+            db.SubmitChanges();
+
+            // 5️. Tạo thông tin học viên mới
+            var hocVienMoi = new HOCVIEN
+            {
+                TenHV = hoTen,
+                MaTK = taiKhoanMoi.MaTK
+            };
+            db.HOCVIENs.InsertOnSubmit(hocVienMoi);
+            db.SubmitChanges();
+
+            TempData["Success"] = "Đăng ký thành công! Hãy đăng nhập để tiếp tục.";
+            return RedirectToAction("Login");
+        }
+
     }
 }
