@@ -1,6 +1,6 @@
 ﻿@{
     ViewBag.Title = "Đăng nhập học viên";
-    ViewBag.HideNavbar = true;  // Ẩn navbar ở layout
+    ViewBag.HideNavbar = true; // Ẩn header + footer
     Layout = "~/Views/Shared/LayoutPage2.cshtml";
 }
 
@@ -15,30 +15,33 @@
     html, body {
         height: 100%;
         margin: 0;
-        overflow: hidden;
         background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
         display: flex;
         justify-content: center;
         align-items: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .login-card {
         background: #fff;
         border-radius: 20px;
-        padding: 40px 35px;
+        padding: 20px 25px; /* giữ nguyên như trước */
         width: 100%;
-        max-width: 420px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        transition: 0.3s;
+        max-width: 380px; /* giữ như trước */
+        box-shadow: 0 10px 15px rgba(0,0,0,0.15); /* shadow mặc định đẹp */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: all 0.3s ease; /* hover mượt */
     }
 
         .login-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px); /* nâng card */
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25); /* shadow đậm hơn giống register */
         }
 
     .login-logo {
-        height: 90px;
+        height: 80px;
         display: block;
         margin: 0 auto 15px;
     }
@@ -47,39 +50,38 @@
         font-weight: 700;
         color: #1800AC;
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
     }
 
     .form-control {
         border-radius: 10px;
-        padding: 10px 14px;
+        padding: 8px 12px;
     }
 
     .btn-login {
         width: 100%;
         border-radius: 10px;
         font-weight: 600;
-        padding: 10px 0;
+        padding: 8px 0;
         background-color: #1800AC;
         border-color: #1800AC;
     }
 
         .btn-login:hover,
         .btn-login:focus {
-            background-color: #1800AC;
+            background-color: #140090;
             border-color: #140090;
         }
 
     .text-muted small {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
-    .alert-custom {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1050;
-        min-width: 300px;
+    .text-center small a {
+        color: #1800AC;
+        font-weight: 600;
+        text-decoration: none;
     }
 </style>
 
@@ -101,7 +103,7 @@
             <label class="form-label fw-semibold">Tên đăng nhập</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-user"></i></span>
-                <input type="text" name="taiKhoan" class="form-control" placeholder="Nhập tài khoản" required autofocus>
+                <input type="text" name="taiKhoan" class="form-control" placeholder="Nhập tên đăng nhập" required autofocus>
             </div>
         </div>
 
@@ -120,12 +122,22 @@
             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
         </button>
 
-        <div class="text-center">
+        @*<div class="text-center">
             <small class="text-muted">
                 <i class="fas fa-info-circle me-1"></i>
                 Liên hệ admin nếu quên mật khẩu
             </small>
+        </div>*@
+
+        <div class="text-center mt-3">
+            <small>
+                Bạn chưa có tài khoản?
+                <a href="@Url.Action("Register", "Home")" style="color:#1800AC; font-weight:600; text-decoration:none;">
+                    Đăng ký ngay
+                </a>
+            </small>
         </div>
+
     </form>
 </div>
 

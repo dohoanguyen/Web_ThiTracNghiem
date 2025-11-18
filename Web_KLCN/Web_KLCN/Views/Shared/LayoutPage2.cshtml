@@ -1,153 +1,149 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@{
+    var maTK = Session["MaTK"];
+    var hv = Session["HOCVIEN"] as Web_KLCN.Models.HOCVIEN;
+    var tenHV = hv != null ? hv.TenHV : "Học viên";
+    var tenDangNhap = Session["TenDangNhap"];
+    var avatar = hv?.AnhDaiDien != null ? Url.Content("~/hinhanh/" + hv.AnhDaiDien) : Url.Content("~/hinhanh/user.png");
+    bool hideNavbar = ViewBag.HideNavbar == true;
+}
+<!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TUQ Education</title>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="~/hinhanh/logo.png">
+    <link rel="icon" type="image/png" href="~/hinhanh/logo.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 
-    <!-- Bootstrap 5 + FontAwesome -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary: #1800AC;
-            --dark: #222;
-            --light: #f8f9fa;
-        }
+        :root { --tuq-primary: #1800AC; }
+
+        .navbar-custom { background-color: #fff !important; }
+        .brand-text-primary { color: var(--tuq-primary) !important; font-weight: 700; }
+        .nav-icon { color: var(--tuq-primary); }
+        .user-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
+        .notif-badge { position: absolute; top: -4px; right: -4px; background: #ffca28; color: #111; border-radius: 50%; padding: 2px 6px; font-weight: 700; font-size: 11px; }
+        .dropdown-menu.custom { min-width: 260px; border-radius: 8px; box-shadow: 0 8px 24px rgba(24,0,172,0.08); }
 
         body {
-            background: #f4f6ff;
-            min-height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
+            padding-top: @(hideNavbar ? "0" : "80px");
+            margin: 0;
+            background-color: #f8f9fa;
         }
 
-        /* Header */
-        header.navbar {
-            background-color: var(--primary);
-            color: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,.15);
-        }
-
-        header .navbar-brand {
-            font-weight: 700;
-            color: #fff !important;
-            font-size: 1.5rem;
-        }
-
-        header .nav-link {
-            color: #fff !important;
-            transition: .25s;
-        }
-
-            header .nav-link:hover {
-                opacity: .8;
-            }
-
-        /* Footer */
-        footer {
-            background: var(--dark);
-            color: #fff;
-            text-align: center;
-            padding: 12px 0;
-            font-size: 0.9rem;
-            width: 100%;
-        }
-
-        /* Animation */
-        .fade-in {
-            animation: fadeIn .4s ease-in-out;
-        }
-
-        @@keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        footer .social-icons a { color: #ffffff; opacity: .9; }
+        footer .social-icons a:hover { opacity: 1; }
     </style>
-
-    @RenderSection("Styles", required: false)
 </head>
-<body>
+<body class="@(hideNavbar ? "no-header" : "")">
 
-    <!-- ✅ Header -->
-    @if (ViewBag.HideNavbar != true)
+    @if (!hideNavbar)
     {
-        <header class="navbar navbar-expand-lg px-4" style="background:#1800AC;">
-            <a class="navbar-brand text-white fw-bold" href="@Url.Action("Index","HocVien")">
-                <i class="fa-solid fa-graduation-cap me-2"></i>TUQ Education
-            </a>
+        <!-- HEADER -->
+        <nav class="navbar navbar-expand-lg navbar-custom shadow-sm fixed-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="/HocVien/Index">
+                    <img src="~/hinhanh/logo.png" style="height:56px;width:auto;" class="me-2" />
+                    <span class="fw-bold" style="color:#1800AC; font-size:1.4rem;">TUQ Education</span>
+                </a>
 
-            <div class="ms-auto d-flex align-items-center gap-3">
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                <!-- Icon thông báo -->
-                <div class="position-relative me-3" style="cursor:pointer;">
-                    <i class="fa-solid fa-bell text-white fa-lg"></i>
-                    <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle px-1"
-                          style="font-size:10px;">3</span>
-                </div>
+                <div class="collapse navbar-collapse" id="navMenu">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item"><a class="nav-link text-dark fw-medium" href="/HocVien/Index"><i class="fa-solid fa-house me-1 nav-icon"></i> Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark fw-medium" href="/HocVien/KhoaHoc"><i class="fa-solid fa-book me-1 nav-icon"></i> Khóa học</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark fw-medium" href="/HocVien/LichHoc"><i class="fa-solid fa-calendar-days me-1 nav-icon"></i> Lịch học</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark fw-medium" href="/HocVien/KetQua"><i class="fa-solid fa-chart-line me-1 nav-icon"></i> Kết quả</a></li>
 
-                <!-- Avatar + Menu -->
-                <div class="dropdown">
-                    <img src="~/hinhanh/avatar_default.png"
-                         class="rounded-circle dropdown-toggle"
-                         data-bs-toggle="dropdown"
-                         width="42" height="42"
-                         style="cursor:pointer; border:2px solid #fff;" />
-
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                        <li>
-                            <a class="dropdown-item" href="@Url.Action("ThongTinCaNhan","HocVien")">
-                                <i class="fa-solid fa-user me-2"></i>Thông tin cá nhân
+                        <!-- Icon thông báo -->
+                        <li class="nav-item position-relative mx-2">
+                            <a href="/HocVien/ThongBao" class="nav-link text-dark p-2 position-relative" title="Thông báo">
+                                <i class="fa-solid fa-bell fa-lg nav-icon"></i>
+                                <span class="notif-badge">1</span>
                             </a>
                         </li>
 
-                        <li>
-                            <a class="dropdown-item" href="@Url.Action("DoiMatKhau","HocVien")">
-                                <i class="fa-solid fa-lock me-2"></i>Đổi mật khẩu
-                            </a>
-                        </li>
+                        <!-- Avatar -->
+                        @if (maTK != null)
+                        {
+                            <li class="nav-item dropdown ms-2">
+                                <a class="nav-link d-flex align-items-center" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="@avatar" alt="avatar" class="user-avatar me-2" />
+                                    <span class="fw-semibold text-dark">@tenHV</span>
+                                </a>
 
-                        <li><hr class="dropdown-divider" /></li>
+                                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3 mt-2" aria-labelledby="userMenu" style="min-width:260px;">
+                                    <!-- Thông tin người dùng -->
+                                    <li class="px-3 py-3 border-bottom">
+                                        <div class="d-flex align-items-center">
+                                            <img src="@avatar" class="user-avatar me-3" />
+                                            <div>
+                                                <div class="fw-semibold" style="color:#1800AC;">@tenHV</div>
+                                                <div class="small text-muted">@tenDangNhap</div>
+                                            </div>
+                                        </div>
+                                    </li>
 
-                        <li>
-                            <a class="dropdown-item text-danger" href="@Url.Action("Logout","HocVien")">
-                                <i class="fa-solid fa-right-from-bracket me-2"></i>Đăng xuất
-                            </a>
-                        </li>
+                                    <!-- Menu item -->
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center py-2" href="/HocVien/ThongTinCaNhan">
+                                            <i class="fa-regular fa-id-card me-2" style="color:#1800AC;"></i>
+                                            <span>Thông tin cá nhân</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center py-2" href="/HocVien/DoiMatKhau">
+                                            <i class="fa-solid fa-key me-2" style="color:#EAB308;"></i>
+                                            <span>Đổi mật khẩu</span>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center py-2 text-danger" href="/Home/Logout">
+                                            <i class="fa-solid fa-right-from-bracket me-2" style="color:#DC2626;"></i>
+                                            <span>Đăng xuất</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item ms-3">
+                                <a class="btn" style="background:#1800AC; color:#fff;" href="/Home/Login">
+                                    <i class="fa-solid fa-right-to-bracket me-1"></i> Đăng nhập
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
-        </header>
+        </nav>
     }
 
-
-    <!-- ✅ Nội dung trang -->
-    <main class="container fade-in py-5">
+    <!-- MAIN CONTENT -->
+    <main class="@(hideNavbar ? "p-0 m-0" : "container mt-4")">
         @RenderBody()
     </main>
 
-    <!-- ✅ Footer (ẩn ở trang Login) -->
-    @if (ViewBag.HideNavbar != true)
+    @if (!hideNavbar)
     {
-        <footer class="py-5">
+        <!-- FOOTER -->
+        <footer class="py-5 bg-dark text-light mt-5">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4 mb-4">
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-graduation-cap me-2 text-primary"></i>
-                            TUQ
+                            <i class="fas fa-graduation-cap me-2" style="color:#1800AC;"></i>
+                            TUQ Education
                         </h5>
-                        <p class="text-light mb-0">
-                            Trung tâm luyện thi chất lượng cao<br>
+                        <p class="mb-0">
+                            Trung tâm luyện thi chất lượng cao<br />
                             Tân Phú, TP.HCM
                         </p>
                     </div>
@@ -155,32 +151,29 @@
                         <h6 class="fw-bold mb-3 text-light">Liên hệ</h6>
                         <div class="text-light">
                             <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-phone me-3 text-primary"></i>
-                                <span>xxxx yyyyy</span>
+                                <i class="fas fa-phone me-3" style="color:#1800AC;"></i><span>xxxx yyyyy</span>
                             </div>
                             <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-envelope me-3 text-primary"></i>
-                                <span>tuq@ttlt.edu.vn</span>
+                                <i class="fas fa-envelope me-3" style="color:#1800AC;"></i><span>tuq@ttlt.edu.vn</span>
                             </div>
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-map-marker-alt me-3 text-primary"></i>
-                                <span>140 Lê Trọng Tấn, Tân Phú, TP.HCM</span>
+                                <i class="fas fa-map-marker-alt me-3" style="color:#1800AC;"></i><span>140 Lê Trọng Tấn, Tân Phú, TP.HCM</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-4 mb-4">
                         <h6 class="fw-bold mb-3 text-light">Theo dõi chúng tôi</h6>
                         <div class="social">
-                            <a href="#" class="me-4"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="me-4"><i class="fab fa-youtube"></i></a>
-                            <a href="#" class="me-4"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="me-4 text-light"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="me-4 text-light"><i class="fab fa-youtube"></i></a>
+                            <a href="#" class="me-4 text-light"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="text-light"><i class="fab fa-linkedin-in"></i></a>
                         </div>
                     </div>
                 </div>
-                <hr class="my-4 border-light">
+                <hr class="my-4 border-light" />
                 <div class="text-center">
-                    <p class="mb-0 text-light">&copy; 2025 TUQ Education. All Rights Reserved.</p>
+                    <p class="mb-0">&copy; 2025 TUQ Education. All Rights Reserved.</p>
                 </div>
             </div>
         </footer>
