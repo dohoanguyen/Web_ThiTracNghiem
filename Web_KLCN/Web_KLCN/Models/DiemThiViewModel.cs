@@ -2,17 +2,15 @@
 
 namespace Web_KLCN.Models
 {
-    public class HocVienDiemThiVM
+    public class DiemThiVM
     {
-        public int MaKQ { get; set; }        // ✅ thêm vào
-        public string TenDe { get; set; }
-        public string Mon { get; set; }
-
-        public double? Diem { get; set; }
-        public int SoCauDung { get; set; }
-
-        public DateTime? NgayThi { get; set; }
-        public string TrangThai { get; set; }
+        public int MaKQ { get; set; }          
+        public string TenDe { get; set; }      
+        public string MonHoc { get; set; }     
+        public decimal Diem { get; set; }       
+        public int SoCauDung { get; set; }      
+        public int TongCau { get; set; }       
+        public DateTime? NgayThi { get; set; }  
+        public string TrangThai { get; set; }   
     }
-
 }

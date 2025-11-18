@@ -1,12 +1,12 @@
-﻿@model List<Web_KLCN.Models.HocVienDiemThiVM>
+﻿@using System.Linq
+@model List<Web_KLCN.Models.DiemThiVM>
 @{
     ViewBag.Title = "Điểm thi";
     Layout = "~/Views/Shared/LayoutPage2.cshtml";
 }
 
 <div class="container py-4 fade-in">
-
-    <h3 class="fw-bold mb-4" style="color:#1800AC;">📊 Lịch sử điểm thi</h3>
+    <h3 class="fw-bold mb-4" style="color:#1800AC;">Lịch sử điểm thi</h3>
 
     @if (!Model.Any())
     {
@@ -27,16 +27,15 @@
                     <th></th>
                 </tr>
             </thead>
-
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@item.Mon</td>
+                        <td>@item.MonHoc</td>
                         <td>@item.TenDe</td>
                         <td class="fw-bold">@item.Diem</td>
                         <td>@item.SoCauDung</td>
-                        @(item.NgayThi.HasValue ? item.NgayThi.Value.ToString("dd/MM/yyyy") : "")
+                        <td>@(item.NgayThi.HasValue ? item.NgayThi.Value.ToString("dd/MM/yyyy") : "")</td>
                         <td>
                             <a href="@Url.Action("XemLaiBaiLam", "HocVien", new { id = item.MaKQ })"
                                class="btn btn-sm btn-outline-primary rounded-3">

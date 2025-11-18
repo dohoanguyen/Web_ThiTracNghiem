@@ -10,7 +10,8 @@
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info text-center">
+        <div class="alert alert-info text-center py-4 rounded-4 shadow-sm">
+            <i class="fa-solid fa-circle-info me-2"></i>
             Bạn hiện chưa có lịch thi nào.
         </div>
     }
@@ -20,29 +21,39 @@
             @foreach (var item in Model)
             {
                 <div class="col-md-6">
-                    <div class="card border-0 shadow rounded-4 h-100 hover-card">
+                    <div class="exam-card shadow-sm rounded-4 border-0">
                         <div class="card-body">
 
-                            <h5 class="fw-bold mb-2">@item.TenDe</h5>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="fw-bold text-dark">@item.TenDe</h5>
+
+                                <span class="status-badge @(item.TrangThai == "Chưa thi" ? "status-pending" : item.TrangThai == "Đang thi" ? "status-doing" : "status-done")">
+                                    @item.TrangThai
+                                </span>
+                            </div>
+
+                            <!-- Môn học -->
                             <p class="text-muted mb-1">
-                                <i class="fa-solid fa-book me-2"></i>@item.Mon
+                                <i class="fa-solid fa-book me-2 primary-icon"></i>
+                                <b>@item.MonHoc</b>
                             </p>
 
-                            <p class="mb-1">
-                                <i class="fa-solid fa-calendar me-2 text-primary"></i>
-                                <b>Ngày thi:</b> @item.NgayThi.ToString("dd/MM/yyyy")
-                            </p>
+                            <div class="exam-info mt-3">
 
-                            <p class="mb-3">
-                                <i class="fa-solid fa-clock me-2 text-primary"></i>
-                                <b>Thời gian:</b> @item.GioBatDau → @item.GioKetThuc
-                            </p>
+                                <p class="mb-1">
+                                    <i class="fa-solid fa-calendar-day me-2 primary-icon"></i>
+                                    <b>Ngày thi:</b> @item.NgayThi.ToString("dd/MM/yyyy")
+                                </p>
 
-                            <div class="d-flex justify-content-between">
-                                <span class="badge bg-secondary">@item.TrangThai</span>
+                                <p class="mb-3">
+                                    <i class="fa-solid fa-clock me-2 primary-icon"></i>
+                                    <b>Thời gian:</b> @item.GioBatDau → @item.GioKetThuc
+                                </p>
+                            </div>
 
+                            <div class="d-flex justify-content-end">
                                 <a href="@Url.Action("LamBai", "HocVien", new { id = item.MaLT })"
-                                   class="btn btn-primary rounded-3">
+                                   class="btn btn-take-exam">
                                     Vào thi <i class="fa-solid fa-arrow-right ms-2"></i>
                                 </a>
                             </div>
@@ -56,12 +67,60 @@
 </div>
 
 <style>
-    .hover-card {
-        transition: .25s;
+    /* Card */
+    .exam-card {
+        background: #ffffff;
+        padding: 22px;
+        transition: 0.25s ease;
+        border-radius: 20px;
     }
 
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 25px rgba(0,0,0,.1) !important;
-        }
+    .exam-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.12);
+    }
+
+    /* Icon màu chủ đạo */
+    .primary-icon {
+        color: #1800AC !important;
+        font-size: 1rem;
+    }
+
+    /* Badge trạng thái */
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-pending { background:#FFE599; color:#7A4E00; }
+    .status-doing { background:#D9E7FF; color:#004C99; }
+    .status-done { background:#C8FFD4; color:#006622; }
+
+    /* Nút Vào thi */
+    .btn-take-exam {
+        background-color: #1800AC;
+        color: #fff;
+        padding: 8px 18px;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: 0.2s;
+        border: none;
+    }
+
+    .btn-take-exam:hover {
+        background-color: #130089;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+
+    /* Fade-in */
+    .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 </style>

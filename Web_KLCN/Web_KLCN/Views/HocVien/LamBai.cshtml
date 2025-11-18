@@ -63,6 +63,12 @@
             color: #333;
         }
 
+/*        .question-btn.unanswered {
+            background: #aac4ff; 
+            color: #002984; 
+            font-weight: 600;
+        }*/
+
     .legend small {
         display: flex;
         align-items: center;
@@ -163,20 +169,129 @@
 
     .btn-submit {
         background: #28a745;
-        color: #fff;
+        color: #fff !important;
         font-weight: 600;
         border-radius: 10px;
         padding: 10px 25px;
+        transition: 0.25s ease;
+        border: none;
     }
 
         .btn-submit:hover {
-            background: #28a745 !important;
-            opacity: 0.9;
+            background: #23963c;
+            color: #fff !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
     .status-info {
         color: #555;
         font-size: 15px;
+    }
+
+    /* Popup modal */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.45);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        display: none;
+    }
+
+    .modal-box {
+        background: #fff;
+        padding: 25px;
+        width: 360px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        animation: popupShow 0.25s ease;
+    }
+
+    @@keyframes popupShow {
+        from { transform: scale(0.8); opacity: 0;}
+        to { transform: scale(1); opacity:1;}
+    }
+
+    .modal-btn {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        margin: 0 8px;
+    }
+
+    .btn-cancel {
+        background: #999;
+        color: #fff;
+    }
+
+    .btn-confirm {
+        background: #28a745;
+        color: #fff;
+    }
+
+    /* Nhận biết */
+    .difficulty-nhanbiet {
+        background-color: #b8e6c9;
+        color: #28a745; 
+        padding: 2px 10px; 
+        border-radius: 8px;
+        font-weight: 700;
+        display: inline-block;
+        white-space: nowrap; 
+    }
+
+    /* Thông hiểu - khá dễ */
+    .difficulty-thonghieu {
+        background-color: #cceeff;
+        color: #00aaff;
+        padding: 2px 10px;
+        border-radius: 8px;
+        font-weight: 700;
+        display: inline-block;
+        white-space: nowrap; /* không xuống dòng */
+    }
+
+    /* Vận dụng - trung bình */
+    .difficulty-vandung {
+        background-color: #ffe0b3;
+        color: #ff9900;
+        padding: 2px 10px;
+        border-radius: 8px;
+        font-weight: 700;
+        display: inline-block;
+        white-space: nowrap; 
+    }
+
+    /* Vận dụng cao - khó */
+    .difficulty-vandungcao {
+        background-color: #f2b3b3;
+        color: #cc0000;
+        padding: 2px 10px;
+        border-radius: 8px;
+        font-weight: 700;
+        display: inline-block;
+        white-space: nowrap; 
+    }
+
+    #current-difficulty {
+        display: inline-flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 0.85rem; 
+        padding: 2px 10px; 
+        border-radius: 8px;
+        font-weight: 700;
+        white-space: nowrap; 
+        margin-bottom: 0; 
     }
 </style>
 
@@ -184,6 +299,12 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <h5>Danh sách câu hỏi</h5>
+        <select id="filterSelect" class="form-select mb-3" style="font-weight:600;">
+            <option value="all">Tất cả câu hỏi</option>
+            <option value="answered">Đã trả lời</option>
+            <option value="unanswered">Chưa trả lời</option>
+        </select>
+
         <div class="question-list">
             @for (int i = 0; i < Model.CauHoiList.Count; i++)
             {
@@ -210,9 +331,16 @@
                 <h4 class="fw-bold" style="color:#1800AC;">@Model.TenBaiThi</h4>
                 <p class="text-muted mb-0">Môn: @Model.MonHoc • Thời gian: @Model.ThoiGian phút</p>
             </div>
-            <div class="timer-box">
-                <i class="fa-solid fa-clock me-2"></i>
-                <span id="countdown">@Model.ThoiGian:00</span>
+
+            <div class="header-right d-flex align-items-center gap-2">
+                <!-- Label độ khó -->
+                <small id="current-difficulty"></small>
+
+                <!-- Đồng hồ -->
+                <div class="timer-box">
+                    <i class="fa-solid fa-clock me-2"></i>
+                    <span id="countdown">@Model.ThoiGian:00</span>
+                </div>
             </div>
         </div>
 
@@ -223,20 +351,47 @@
             @for (int i = 0; i < Model.CauHoiList.Count; i++)
             {
                 var c = Model.CauHoiList[i];
-                <div class="question-area d-none" id="question-@i">
-                    <h5 class="fw-bold mb-3">Câu @(i + 1): @c.NoiDung</h5>
+                <div class="question-area d-none" id="question-@i" data-dokho="@c.TenDoKho">
+                    <div class="question-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <h5 class="fw-bold mb-2">Câu @(i + 1): @c.NoiDung</h5>
+                        @*<small class="difficulty-@c.TenDoKho.ToLower().Replace(" ", "")">
+                @c.TenDoKho
+            </small>*@
+                    </div>
 
-                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="A" /> A. @c.DapAnA</label>
+                    @if (c.MaP == 1)
+                    {
+                        <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="A" /> A. @c.DapAnA</label>
+                        <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="B" /> B. @c.DapAnB</label>
+                        <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="C" /> C. @c.DapAnC</label>
+                        <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="D" /> D. @c.DapAnD</label>
+                    }
+                    else if (c.MaP == 2)
+                    {
+                        foreach (var yd in c.ListYDung)
+                        {
+                            <label class="answer-item">
+                                <input type="checkbox" name="CauHoi_@c.MaCH" value="@yd.MaPhuongAn" />
+                                @yd.NoiDung
+                            </label>
+                        }
+                    }
+                    else if (c.MaP == 3)
+                    {
+                        <textarea class="form-control" name="CauHoi_@c.MaCH" rows="3"></textarea>
+                    }
+
+                    @*<label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="A" /> A. @c.DapAnA</label>
                     <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="B" /> B. @c.DapAnB</label>
                     <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="C" /> C. @c.DapAnC</label>
-                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="D" /> D. @c.DapAnD</label>
+                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="D" /> D. @c.DapAnD</label>*@
                 </div>
             }
 
             <div class="bottom-bar">
                 <div>
-                    <button type="button" id="btnPrev" class="btn-nav">⬅ Câu trước</button>
-                    <button type="button" id="btnNext" class="btn-nav">Câu tiếp theo ➡</button>
+                    <button type="button" id="btnPrev" class="btn-nav">Câu trước</button>
+                    <button type="button" id="btnNext" class="btn-nav">Câu tiếp theo</button>
                 </div>
 
                 <div class="status-info">
@@ -246,6 +401,17 @@
                 <button type="submit" class="btn btn-submit">Nộp bài</button>
             </div>
         </form>
+    </div>
+
+    <div id="modalConfirm" class="modal-overlay">
+        <div class="modal-box">
+            <h5 class="fw-bold mb-3">Xác nhận nộp bài</h5>
+            <p>Bạn có chắc chắn muốn nộp bài không?</p>
+            <div class="mt-3">
+                <button type="button" class="modal-btn btn-cancel" id="btnCancelModal">Hủy</button>
+                <button type="button" class="modal-btn btn-confirm" id="btnAcceptModal">Nộp bài</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -296,6 +462,41 @@
         });
     });
 
+        // ========== Textbox ==========
+        document.querySelectorAll("textarea[name^='CauHoi_']").forEach(tb => {
+            tb.addEventListener("input", function () {
+                const mach = this.name.split("_")[1];
+                const btn = Array.from(qBtns).find(b => b.dataset.mach === mach);
+
+                if (this.value.trim().length > 0) {
+                    btn.classList.remove("unanswered");
+                    btn.classList.add("answered");
+                } else {
+                    btn.classList.remove("answered");
+                    btn.classList.add("unanswered");
+                }
+
+                updateUI();
+            });
+        });
+
+     // ========== Lọc câu hỏi theo trạng thái ==========
+        document.getElementById("filterSelect").addEventListener("change", function () {
+            const value = this.value;
+
+            qBtns.forEach(btn => {
+                if (value === "all") {
+                    btn.style.display = "block";
+                }
+                else if (value === "answered") {
+                    btn.style.display = btn.classList.contains("answered") ? "block" : "none";
+                }
+                else if (value === "unanswered") {
+                    btn.style.display = btn.classList.contains("unanswered") ? "block" : "none";
+                }
+            });
+        });
+
     // ========== Đếm ngược ==========
     let t = @Model.ThoiGian * 60;
     const countdown = document.getElementById("countdown");
@@ -310,17 +511,78 @@
         }
     }, 1000);
 
-    // ========== Popup xác nhận ==========
-    document.getElementById("form-thi").addEventListener("submit", function (e) {
-        e.preventDefault();
-        if (confirm("Bạn có chắc muốn nộp bài không?")) {
+        // ========== Popup xác nhận ==========
+        const modal = document.getElementById("modalConfirm");
+        const btnCancelModal = document.getElementById("btnCancelModal");
+        const btnAcceptModal = document.getElementById("btnAcceptModal");
+
+        // Khi bấm NỘP BÀI → mở popup
+        document.getElementById("form-thi").addEventListener("submit", function (e) {
+            e.preventDefault();
+            modal.style.display = "flex";
+        });
+
+        // Hủy
+        btnCancelModal.onclick = () => {
+            modal.style.display = "none";
+        };
+
+        // Xác nhận
+        btnAcceptModal.onclick = () => {
             clearInterval(timer);
-            alert("Nộp bài thành công! Hệ thống đang xử lý kết quả...");
-            this.submit();
-        }
-    });
+            modal.style.display = "none";
+            document.getElementById("form-thi").submit();
+        };
 
     // Khởi tạo
-    updateUI();
+        updateUI();
+
+        function removeAccents(str) {
+            return str
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")  // bỏ dấu
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D");
+        }
+
+        function updateDifficulty() {
+            const c = questions[current];
+            const diffLabel = document.getElementById("current-difficulty");
+            const raw = c.dataset.dokho;
+
+            if (!raw) {
+                diffLabel.style.display = "none";
+                diffLabel.className = "";
+                diffLabel.textContent = "";
+                return;
+            }
+
+            diffLabel.style.display = "inline-flex";
+
+            // ❗ bỏ dấu + xóa khoảng trắng
+            const difficulty = removeAccents(raw.toLowerCase()).replace(/ /g, "");
+
+            diffLabel.className = "";
+            diffLabel.classList.add("difficulty-" + difficulty);
+
+            diffLabel.textContent = raw;
+        }
+
+        // Gọi trong updateUI
+        function updateUI() {
+            questions.forEach((q, i) => q.classList.toggle("d-none", i !== current));
+            qBtns.forEach((b, i) => {
+                b.classList.remove("current");
+                if (i === current) b.classList.add("current");
+            });
+
+            btnPrev.disabled = current === 0;
+            btnNext.disabled = current === total - 1;
+
+            const answered = document.querySelectorAll(".question-btn.answered").length;
+            remainingSpan.textContent = total - answered;
+
+            updateDifficulty();
+        }
     </script>
 }
