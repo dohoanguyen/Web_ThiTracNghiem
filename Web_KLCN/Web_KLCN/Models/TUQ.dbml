@@ -4,10 +4,32 @@
       <Column Name="MaBL" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="MaKQ" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="MaCH" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="DapAnChon" Type="System.Char" DbType="Char(1)" CanBeNull="true" />
-      <Column Name="TrangThai" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="DapAnChon" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Association Name="KETQUATHI_BAILAM" Member="KETQUATHI" ThisKey="MaKQ" OtherKey="MaKQ" Type="KETQUATHI" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="NGANHANGCAUHOI_BAILAM" Member="NGANHANGCAUHOI" ThisKey="MaCH" OtherKey="MaCH" Type="NGANHANGCAUHOI" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TAIKHOAN" Member="TAIKHOANs">
+    <Type Name="TAIKHOAN">
+      <Column Name="MaTK" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TaiKhoan" Member="TaiKhoan1" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="MatKhau" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="MaPQ" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="NgayTao" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Association Name="TAIKHOAN_GIAOVIEN" Member="GIAOVIENs" ThisKey="MaTK" OtherKey="MaTK" Type="GIAOVIEN" />
+      <Association Name="TAIKHOAN_HOCVIEN" Member="HOCVIENs" ThisKey="MaTK" OtherKey="MaTK" Type="HOCVIEN" />
+      <Association Name="PHANQUYEN_TAIKHOAN" Member="PHANQUYEN" ThisKey="MaPQ" OtherKey="MaPQ" Type="PHANQUYEN" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DAPAN" Member="DAPANs">
+    <Type Name="DAPAN">
+      <Column Name="MaDA" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="MaCH" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MaPhuongAn" Type="System.String" DbType="NVarChar(5) NOT NULL" CanBeNull="false" />
+      <Column Name="NoiDung" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="DungSai" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="NGANHANGCAUHOI_DAPAN" Member="NGANHANGCAUHOI" ThisKey="MaCH" OtherKey="MaCH" Type="NGANHANGCAUHOI" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.DETHI" Member="DETHIs">
@@ -15,14 +37,12 @@
       <Column Name="MaD" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="MaM" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="TenDe" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="MaGV" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="ThoiGian" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="SoCau" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="NgayTao" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Association Name="DETHI_DETHI_CAUHOI" Member="DETHI_CAUHOIs" ThisKey="MaD" OtherKey="MaD" Type="DETHI_CAUHOI" />
       <Association Name="DETHI_LICHTHI" Member="LICHTHIs" ThisKey="MaD" OtherKey="MaD" Type="LICHTHI" />
-      <Association Name="GIAOVIEN_DETHI" Member="GIAOVIEN" ThisKey="MaGV" OtherKey="MaGV" Type="GIAOVIEN" IsForeignKey="true" />
       <Association Name="MON_DETHI" Member="MON" ThisKey="MaM" OtherKey="MaM" Type="MON" IsForeignKey="true" />
     </Type>
   </Table>
@@ -55,7 +75,6 @@
       <Column Name="SDT" Type="System.String" DbType="Char(10)" CanBeNull="true" />
       <Column Name="AnhDaiDien" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
-      <Association Name="GIAOVIEN_DETHI" Member="DETHIs" ThisKey="MaGV" OtherKey="MaGV" Type="DETHI" />
       <Association Name="GIAOVIEN_GIAOVIEN_MON" Member="GIAOVIEN_MONs" ThisKey="MaGV" OtherKey="MaGV" Type="GIAOVIEN_MON" />
       <Association Name="GIAOVIEN_LOPHOC" Member="LOPHOCs" ThisKey="MaGV" OtherKey="MaGV" Type="LOPHOC" />
       <Association Name="GIAOVIEN_NGANHANGCAUHOI" Member="NGANHANGCAUHOIs" ThisKey="MaGV" OtherKey="MaGV" Type="NGANHANGCAUHOI" />
@@ -102,7 +121,6 @@
       <Column Name="MaLT" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="MaHV" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Diem" Type="System.Decimal" DbType="Decimal(5,2)" CanBeNull="true" />
-      <Column Name="SoCauDung" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="ThoiGianBatDau" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
       <Column Name="ThoiGianNop" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
@@ -118,6 +136,7 @@
       <Column Name="NamHoc" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
       <Column Name="NgayBatDau" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
       <Column Name="NgayKetThuc" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Association Name="KHOAHOC_KYTHI" Member="KYTHIs" ThisKey="MaK" OtherKey="MaK" Type="KYTHI" />
       <Association Name="KHOAHOC_LOPHOC" Member="LOPHOCs" ThisKey="MaK" OtherKey="MaK" Type="LOPHOC" />
     </Type>
@@ -178,23 +197,33 @@
   </Table>
   <Table Name="dbo.NGANHANGCAUHOI" Member="NGANHANGCAUHOIs">
     <Type Name="NGANHANGCAUHOI">
+      <Column Name="MaP" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="MaCH" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="MaM" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="MaDK" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="MaGV" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="NoiDung" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="DapAnA" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="DapAnB" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="DapAnC" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="DapAnD" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="DapAnDung" Type="System.Char" DbType="Char(1)" CanBeNull="true" />
+      <Column Name="DapAnA" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="DapAnB" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="DapAnC" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="DapAnD" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="DapAnDung" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Column Name="GiaiThich" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Association Name="NGANHANGCAUHOI_BAILAM" Member="BAILAMs" ThisKey="MaCH" OtherKey="MaCH" Type="BAILAM" />
+      <Association Name="NGANHANGCAUHOI_DAPAN" Member="DAPANs" ThisKey="MaCH" OtherKey="MaCH" Type="DAPAN" />
       <Association Name="NGANHANGCAUHOI_DETHI_CAUHOI" Member="DETHI_CAUHOIs" ThisKey="MaCH" OtherKey="MaCH" Type="DETHI_CAUHOI" />
       <Association Name="DOKHO_NGANHANGCAUHOI" Member="DOKHO" ThisKey="MaDK" OtherKey="MaDK" Type="DOKHO" IsForeignKey="true" />
       <Association Name="GIAOVIEN_NGANHANGCAUHOI" Member="GIAOVIEN" ThisKey="MaGV" OtherKey="MaGV" Type="GIAOVIEN" IsForeignKey="true" />
       <Association Name="MON_NGANHANGCAUHOI" Member="MON" ThisKey="MaM" OtherKey="MaM" Type="MON" IsForeignKey="true" />
+      <Association Name="PHAN_NGANHANGCAUHOI" Member="PHAN" ThisKey="MaP" OtherKey="MaP" Type="PHAN" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PHAN" Member="PHANs">
+    <Type Name="PHAN">
+      <Column Name="MaP" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TenPhan" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="PHAN_NGANHANGCAUHOI" Member="NGANHANGCAUHOIs" ThisKey="MaP" OtherKey="MaP" Type="NGANHANGCAUHOI" />
     </Type>
   </Table>
   <Table Name="dbo.PHANQUYEN" Member="PHANQUYENs">
@@ -202,19 +231,6 @@
       <Column Name="MaPQ" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="LoaiPQ" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Association Name="PHANQUYEN_TAIKHOAN" Member="TAIKHOANs" ThisKey="MaPQ" OtherKey="MaPQ" Type="TAIKHOAN" />
-    </Type>
-  </Table>
-  <Table Name="dbo.TAIKHOAN" Member="TAIKHOANs">
-    <Type Name="TAIKHOAN">
-      <Column Name="MaTK" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="TaiKhoan" Member="TaiKhoan1" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="MatKhau" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="MaPQ" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
-      <Column Name="NgayTao" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
-      <Association Name="TAIKHOAN_GIAOVIEN" Member="GIAOVIENs" ThisKey="MaTK" OtherKey="MaTK" Type="GIAOVIEN" />
-      <Association Name="TAIKHOAN_HOCVIEN" Member="HOCVIENs" ThisKey="MaTK" OtherKey="MaTK" Type="HOCVIEN" />
-      <Association Name="PHANQUYEN_TAIKHOAN" Member="PHANQUYEN" ThisKey="MaPQ" OtherKey="MaPQ" Type="PHANQUYEN" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

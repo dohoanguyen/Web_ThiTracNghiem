@@ -2,7 +2,7 @@
 }
 
 :root {
-    --primary: #1800AC; /* 💙 Màu chủ đạo */
+    --primary: #1800AC;
     --dark: #343a40;
     --light: #f8f9fa;
     --shadow: 0 5px 15px rgba(0, 0, 0, .08);

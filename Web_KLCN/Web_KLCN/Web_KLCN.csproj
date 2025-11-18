@@ -105,8 +105,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\BaiThiViewModel.cs" />
     <Compile Include="Models\DiemThiViewModel.cs" />
+    <Compile Include="Models\KetQuaThiViewModel.cs" />
+    <Compile Include="Models\LopHocViewModel.cs" />
+    <Compile Include="Models\BaiThiViewModel.cs" />
     <Compile Include="Models\LichThiViewModel.cs" />
     <Compile Include="Models\TUQ.designer.cs">
       <AutoGen>True</AutoGen>
@@ -139,6 +141,8 @@
     <Content Include="Views\HocVien\XemLaiBaiLam.cshtml" />
     <Content Include="Views\HocVien\DoiMatKhau.cshtml" />
     <Content Include="Views\HocVien\KetQuaThi.cshtml" />
+    <Content Include="Views\Home\Register.cshtml" />
+    <Content Include="Views\HocVien\LopHocCuaToi.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
