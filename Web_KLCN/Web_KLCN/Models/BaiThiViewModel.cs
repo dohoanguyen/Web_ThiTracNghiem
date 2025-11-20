@@ -7,18 +7,18 @@ namespace Web_KLCN.Models
     /// </summary>
     public class BaiThiViewModel
     {
-        public int MaLT { get; set; }                // Mã lượt thi
-        public string TenBaiThi { get; set; }        // Tên bài thi (VD: "Đề thi giữa kì Toán 12")
-        public string MonHoc { get; set; }           // Môn học
-        public int ThoiGian { get; set; }            // Thời gian làm bài (phút)
-        public int TongSoCau { get; set; }           // Tổng số câu trong bài thi
+        public int MaLT { get; set; }              
+        public string TenDe { get; set; }       
+        public string MonHoc { get; set; }          
+        public int ThoiGian { get; set; }          
+        public int TongSoCau { get; set; }
+
+        public int SoCauDung { get; set; }  
+        public double Diem { get; set; }
 
         public List<BaiThiCauHoiVM> CauHoiList { get; set; } = new List<BaiThiCauHoiVM>();
     }
 
-    /// <summary>
-    /// ViewModel cho từng câu hỏi trong bài thi
-    /// </summary>
     public class BaiThiCauHoiVM
     {
         public int MaCH { get; set; }
@@ -31,6 +31,7 @@ namespace Web_KLCN.Models
 
         public string DapAnDung { get; set; }
         public string DapAnChon { get; set; }
+        public string GiaiThich { get; set; }
 
         public int ThuTu { get; set; }
 
@@ -40,6 +41,8 @@ namespace Web_KLCN.Models
         public string TenDoKho { get; set; } //Nhận biết, Thông hiểu, Vận dụng, Vận dụng cao
 
         public List<DapAnVM> ListYDung { get; set; } = new List<DapAnVM>();
+        public List<string> DapAnChonList { get; set; } = new List<string>();
+        public List<string> DapAnDungList { get; set; } = new List<string>();
 
         public class DapAnVM
         {

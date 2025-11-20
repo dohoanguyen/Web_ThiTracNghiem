@@ -153,6 +153,28 @@ namespace Web_KLCN.Controllers
             var de = db.DETHIs.SingleOrDefault(x => x.MaD == lt.MaD);
             var mon = db.MONs.SingleOrDefault(x => x.MaM == de.MaM);
 
+            var kq = db.KETQUATHIs.SingleOrDefault(x => x.MaHV == hv.MaHV && x.MaLT == lt.MaLT);
+
+            if (kq == null)
+            {
+                kq = new KETQUATHI
+                {
+                    MaHV = hv.MaHV,
+                    MaLT = lt.MaLT,
+                    ThoiGianBatDau = DateTime.Now,
+                    TrangThai = "Đang làm",
+                    Diem = 0
+                };
+                db.KETQUATHIs.InsertOnSubmit(kq);
+            }
+            else
+            {
+                kq.ThoiGianBatDau = DateTime.Now;
+                kq.TrangThai = "Đang làm";
+            }
+
+            db.SubmitChanges();
+
             var cauHoiList = (from ct in db.DETHI_CAUHOIs
                               join ch in db.NGANHANGCAUHOIs on ct.MaCH equals ch.MaCH
                               join dk in db.DOKHOs on ch.MaDK equals dk.MaDK
@@ -182,7 +204,7 @@ namespace Web_KLCN.Controllers
             var vm = new BaiThiViewModel
             {
                 MaLT = lt.MaLT,
-                TenBaiThi = de.TenDe,
+                TenDe = de.TenDe,
                 MonHoc = mon.TenMon,
                 ThoiGian = de.ThoiGian ?? 30,
                 CauHoiList = cauHoiList
@@ -213,15 +235,31 @@ namespace Web_KLCN.Controllers
                 return RedirectToAction("LichThi");
             }
 
-            var kq = new KETQUATHI
+            var kq = db.KETQUATHIs.SingleOrDefault(x => x.MaHV == hv.MaHV && x.MaLT == MaLT);
+
+            if (kq == null)
             {
-                MaHV = hv.MaHV,
-                MaLT = MaLT,
-                Diem = 0,
-                TrangThai = "Đang làm"
-            };
-            db.KETQUATHIs.InsertOnSubmit(kq);
+                kq = new KETQUATHI
+                {
+                    MaHV = hv.MaHV,
+                    MaLT = MaLT,
+                    Diem = 0,
+                    TrangThai = "Đang làm",
+                    ThoiGianBatDau = DateTime.Now
+                };
+                db.KETQUATHIs.InsertOnSubmit(kq);
+            }
+            else
+            {
+                // Nếu đã có, reset dữ liệu
+                kq.Diem = 0;
+                kq.TrangThai = "Đang làm";
+                kq.ThoiGianBatDau = DateTime.Now;
+                kq.ThoiGianNop = null;
+            }
+
             db.SubmitChanges();
+
 
             decimal tongDiem = 0;
             int soDung = 0;
@@ -234,26 +272,34 @@ namespace Web_KLCN.Controllers
                 string dapAnChon = form[key];
                 decimal diemCong = 0;
 
-                if (cau.MaCH == 1 || cau.MaCH == 3) // 1 đáp án hoặc tự luận
+                if (cau.MaP == 1 || cau.MaP == 3) // 1 đáp án hoặc tự luận
                 {
                     if (!string.IsNullOrEmpty(dapAnChon) &&
                         dapAnChon.Trim().ToLower() == cau.DapAnDung.Trim().ToLower())
                     {
-                        diemCong = (cau.MaCH == 1) ? 0.25m : 0.5m;
+                        diemCong = (cau.MaP == 1) ? 0.25m : 0.5m;
                         soDung++;
                     }
                 }
-                else if (cau.MaCH == 2) // nhiều đáp án
+                else if (cau.MaP == 2) // checkbox
                 {
-                    var chonArr = dapAnChon?.Split(',') ?? new string[0];
-                    var dungArr = cau.DapAnDung?.Split(',') ?? new string[0];
+                    var chonArr = form.GetValues(key) ?? new string[0]; // đáp án học viên chọn
+                    var dungArr = cau.DapAnDung?.Split(',') ?? new string[0]; // đáp án đúng
+
+                    // đếm số ý đúng trong câu
                     int soDungCau = chonArr.Count(a => dungArr.Contains(a));
 
-                    if (soDungCau == 1) diemCong = 0.1m;
-                    else if (soDungCau == 2) diemCong = 0.25m;
-                    else if (soDungCau == 3) diemCong = 0.5m;
-                    else if (soDungCau == 4) diemCong = 1m;
+                    // chấm theo logic bạn đưa ra
+                    switch (soDungCau)
+                    {
+                        case 1: diemCong = 0.1m; break;
+                        case 2: diemCong = 0.25m; break;
+                        case 3: diemCong = 0.5m; break;
+                        case 4: diemCong = 1m; break;
+                        default: diemCong = 0m; break;
+                    }
 
+                    // nếu học viên chọn đủ tất cả ý đúng thì tính số câu đúng
                     if (soDungCau == dungArr.Length) soDung++;
                 }
 
@@ -270,6 +316,7 @@ namespace Web_KLCN.Controllers
             db.BAILAMs.InsertAllOnSubmit(listBaiLam);
             kq.Diem = Math.Round(tongDiem, 2);
             kq.TrangThai = "Đã nộp";
+            kq.ThoiGianNop = DateTime.Now;
             db.SubmitChanges();
 
             var vm = new KetQuaThiVM
@@ -283,7 +330,6 @@ namespace Web_KLCN.Controllers
 
             return View("KetQuaThi", vm);
         }
-
 
         // ============================
         // LỊCH SỬ ĐIỂM
@@ -448,7 +494,7 @@ namespace Web_KLCN.Controllers
         // ============================
         // XEM LẠI BÀI LÀM
         // ============================
-        public ActionResult XemLaiBaiLam(int id) // id = MaKQ (kết quả thi)
+        public ActionResult XemLaiBaiLam(int id)
         {
             if (Session["MaTK"] == null)
                 return RedirectToAction("Login", "Home");
@@ -468,34 +514,53 @@ namespace Web_KLCN.Controllers
 
             var cauHoiList = (from bl in db.BAILAMs
                               join ch in db.NGANHANGCAUHOIs on bl.MaCH equals ch.MaCH
+                              join dk in db.DOKHOs on ch.MaDK equals dk.MaDK into dkGroup
+                              from dk in dkGroup.DefaultIfEmpty()
                               where bl.MaKQ == kq.MaKQ
                               orderby ch.MaCH
                               select new
                               {
                                   bl,
-                                  ch
+                                  ch,
+                                  dk
                               })
-                  .AsEnumerable()  // chuyển sang LINQ to Objects
-                  .Select(x => new XemLaiCauHoiVM
-                  {
-                      STT = x.ch.MaCH,
-                      NoiDung = x.ch.NoiDung,
-                      DapAnDung = string.IsNullOrEmpty(x.ch.DapAnDung) ? (char?)null : x.ch.DapAnDung[0],
-                      DapAnChon = string.IsNullOrEmpty(x.bl.DapAnChon) ? (char?)null : x.bl.DapAnChon[0]
-                  }).ToList();
+                .AsEnumerable()
+                .Select(x => new BaiThiCauHoiVM
+                {
+                    MaCH = x.ch.MaCH,
+                    NoiDung = x.ch.NoiDung,
+                    DapAnA = x.ch.DapAnA,
+                    DapAnB = x.ch.DapAnB,
+                    DapAnC = x.ch.DapAnC,
+                    DapAnD = x.ch.DapAnD,
+                    DapAnDung = x.ch.DapAnDung,
+                    DapAnChon = x.bl.DapAnChon,
+                    GiaiThich = x.ch.GiaiThich,
+                    MaP = x.ch.MaP,
+                    MaDoKho = x.dk?.MaDK ?? 0,
+                    TenDoKho = x.dk?.TenDoKho ?? "",
+                    ListYDung = db.DAPANs
+                                 .Where(d => d.MaCH == x.ch.MaCH)
+                                 .Select(d => new BaiThiCauHoiVM.DapAnVM
+                                 {
+                                     MaPhuongAn = d.MaPhuongAn,
+                                     NoiDung = d.NoiDung,
+                                     DungSai = d.NoiDung == x.ch.DapAnDung ? 1 : 0
+                                 }).ToList(),
+                    DapAnChonList = (x.bl.DapAnChon ?? "").Split(',').ToList(),
+                    DapAnDungList = (x.ch.DapAnDung ?? "").Split(',').ToList()
+                }).ToList();
 
-
-            var vm = new XemLaiBaiLamVM
+            var vm = new BaiThiViewModel
             {
                 TenDe = de.TenDe,
                 MonHoc = db.MONs.SingleOrDefault(m => m.MaM == de.MaM)?.TenMon ?? "",
-                Diem = kq.Diem.HasValue ? (double)kq.Diem.Value : 0,
-                SoCauDung = cauHoiList.Count(c => c.DapAnChon == c.DapAnDung),
-                CauHoiList = cauHoiList
-            }; 
+                ThoiGian = de.ThoiGian ?? 30,
+                CauHoiList = cauHoiList,
+                TongSoCau = cauHoiList.Count
+            };
 
             return View(vm);
         }
-
     }
 }

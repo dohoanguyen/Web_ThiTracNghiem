@@ -249,7 +249,7 @@
         white-space: nowrap; 
     }
 
-    /* Thông hiểu - khá dễ */
+    /* Thông hiểu */
     .difficulty-thonghieu {
         background-color: #cceeff;
         color: #00aaff;
@@ -260,7 +260,7 @@
         white-space: nowrap; /* không xuống dòng */
     }
 
-    /* Vận dụng - trung bình */
+    /* Vận dụng */
     .difficulty-vandung {
         background-color: #ffe0b3;
         color: #ff9900;
@@ -271,7 +271,7 @@
         white-space: nowrap; 
     }
 
-    /* Vận dụng cao - khó */
+    /* Vận dụng cao */
     .difficulty-vandungcao {
         background-color: #f2b3b3;
         color: #cc0000;
@@ -328,7 +328,7 @@
     <div class="main-content">
         <div class="exam-header">
             <div>
-                <h4 class="fw-bold" style="color:#1800AC;">@Model.TenBaiThi</h4>
+                <h4 class="fw-bold" style="color:#1800AC;">@Model.TenDe</h4>
                 <p class="text-muted mb-0">Môn: @Model.MonHoc • Thời gian: @Model.ThoiGian phút</p>
             </div>
 
@@ -378,13 +378,11 @@
                     }
                     else if (c.MaP == 3)
                     {
-                        <textarea class="form-control" name="CauHoi_@c.MaCH" rows="3"></textarea>
+                        <textarea class="form-control"
+                                  name="CauHoi_@c.MaCH"
+                                  rows="3"
+                                  placeholder="Nhập câu trả lời của bạn tại đây..."></textarea>
                     }
-
-                    @*<label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="A" /> A. @c.DapAnA</label>
-                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="B" /> B. @c.DapAnB</label>
-                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="C" /> C. @c.DapAnC</label>
-                    <label class="answer-item"><input type="radio" name="CauHoi_@c.MaCH" value="D" /> D. @c.DapAnD</label>*@
                 </div>
             }
 
@@ -447,6 +445,7 @@
         b.onclick = () => { current = i; updateUI(); };
     });
 
+        // ========== Radio ==========
     document.querySelectorAll(".answer-item input").forEach(radio => {
         radio.addEventListener("change", function () {
             const group = this.name;
@@ -455,12 +454,37 @@
             btn.classList.remove("unanswered");
             btn.classList.add("answered");
 
-            document.querySelectorAll(`input[name='${group}']`).forEach(i => i.parentElement.classList.remove("selected"));
+            if (this.type === 'radio') {
+                document.querySelectorAll(`input[name='${group}']`).forEach(i => i.parentElement.classList.remove("selected"));
+            }
             this.parentElement.classList.add("selected");
 
             updateUI();
         });
-    });
+        });
+
+        // ========== Checkbox ==========
+        document.querySelectorAll(".answer-item input[type='checkbox']").forEach(cb => {
+            cb.addEventListener("change", function () {
+                const group = this.name;
+                const mach = group.split("_")[1];
+                const btn = Array.from(qBtns).find(b => b.dataset.mach === mach);
+
+                // Kiểm tra còn checkbox nào được chọn không
+                const anyChecked = Array.from(document.querySelectorAll(`input[name='${group}']`)).some(i => i.checked);
+
+                if (anyChecked) {
+                    btn.classList.remove("unanswered");
+                    btn.classList.add("answered");
+                } else {
+                    btn.classList.remove("answered");
+                    btn.classList.add("unanswered");
+                }
+
+                updateUI();
+            });
+        });
+
 
         // ========== Textbox ==========
         document.querySelectorAll("textarea[name^='CauHoi_']").forEach(tb => {
@@ -535,8 +559,6 @@
         };
 
     // Khởi tạo
-        updateUI();
-
         function removeAccents(str) {
             return str
                 .normalize("NFD")
@@ -566,23 +588,6 @@
             diffLabel.classList.add("difficulty-" + difficulty);
 
             diffLabel.textContent = raw;
-        }
-
-        // Gọi trong updateUI
-        function updateUI() {
-            questions.forEach((q, i) => q.classList.toggle("d-none", i !== current));
-            qBtns.forEach((b, i) => {
-                b.classList.remove("current");
-                if (i === current) b.classList.add("current");
-            });
-
-            btnPrev.disabled = current === 0;
-            btnNext.disabled = current === total - 1;
-
-            const answered = document.querySelectorAll(".question-btn.answered").length;
-            remainingSpan.textContent = total - answered;
-
-            updateDifficulty();
         }
     </script>
 }
