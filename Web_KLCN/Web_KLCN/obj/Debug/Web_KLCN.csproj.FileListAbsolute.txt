@@ -214,3 +214,7 @@ C:\Users\uyend\OneDrive\Documents\GitHub\Web_ThiTracNghiem\Web_KLCN\Web_KLCN\obj
 C:\Users\uyend\OneDrive\Documents\GitHub\Web_ThiTracNghiem\Web_KLCN\Web_KLCN\obj\Debug\Web_KLCN.csproj.Up2Date
 C:\Users\uyend\OneDrive\Documents\GitHub\Web_ThiTracNghiem\Web_KLCN\Web_KLCN\obj\Debug\Web_KLCN.dll
 C:\Users\uyend\OneDrive\Documents\GitHub\Web_ThiTracNghiem\Web_KLCN\Web_KLCN\obj\Debug\Web_KLCN.pdb
+C:\Users\lepha\OneDrive\Desktop\KLTN\Web_ThiTracNghiem\Web_KLCN\Web_KLCN\obj\Debug\Web_KLCN.csproj.AssemblyReference.cache
+C:\Users\lepha\OneDrive\Desktop\KLTN\Web_ThiTracNghiem\Web_KLCN\Web_KLCN\obj\Debug\Web_KLCN.csproj.CoreCompileInputs.cache
+C:\Users\lepha\OneDrive\Desktop\KLTN\Web_ThiTracNghiem\Web_KLCN\Web_KLCN\obj\Debug\Web_KLCN.dll
+C:\Users\lepha\OneDrive\Desktop\KLTN\Web_ThiTracNghiem\Web_KLCN\Web_KLCN\obj\Debug\Web_KLCN.pdb
