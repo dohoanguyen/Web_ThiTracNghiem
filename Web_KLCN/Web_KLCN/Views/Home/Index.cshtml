@@ -3,35 +3,390 @@
     Layout = "~/Views/Shared/LayoutPage.cshtml";
 }
 
-<!-- Banner giới thiệu -->
-<!--<section class="text-center py-5" style="background:linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);">
-    <div class="container">
-        <img src="~/hinhanh/logo.png" alt="Logo TUQ" style="height:80px;" class="mb-3">
-        <h1 class="fw-bold text-primary mb-3">TUQ Education</h1>
-        <p class="text-muted mb-4 fs-5">Hệ thống thi trắc nghiệm trực tuyến - Nền tảng học tập hiện đại cho học sinh và sinh viên</p>
-        <a href="@Url.Action("Login", "Home")" class="btn btn-primary btn-lg rounded-3 px-5">
-            <i class="fa-solid fa-user-graduate me-2"></i>Đăng nhập học viên
-        </a>
-    </div>
-</section>-->
+<section class="relative flex flex-col max-w-6xl w-full mx-auto">
+    <!-- Background image -->
+    <div class="absolute inset-0 bg-no-repeat bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDy0UwAVjVIBrBcPHE4pidkvtRrJsDcedUsqmrQiYqaplRXq5giqyU8cMwFp4PF4K9R6QQ47pPMujSODKbB5SwMbTtnuWqcLyrX34j3ckkk2xHwLARymaxxuEF_yOdcfqOYPChrH5bxB-kilIeGVauhRJBLPQv7neJAuGd6FB8UTW3mYdEWE3BZPzVNWWuxNHWNWIFY33bf2cm-9S1X29KpVIe8ZdYF71xd1MXftIxKdUu4kq6rBbSxsJ2EnWM6HtGFuIq18DiOimk'); opacity:0.05;"></div>
 
-<!-- Giới thiệu dịch vụ -->
-<!--<section class="container py-5">
-    <div class="row text-center">
-        <div class="col-md-4 mb-4">
-            <i class="fa-solid fa-pen-to-square fa-3x text-primary mb-3"></i>
-            <h5 class="fw-bold">Thi trắc nghiệm trực tuyến</h5>
-            <p class="text-muted">Tham gia các kỳ thi thử với giao diện thân thiện, chấm điểm tự động và chính xác.</p>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center relative z-10">
+        <div>
+            <div class="inline-block bg-primary/10 text-primary border border-primary/20 px-4 py-1.5 rounded-full text-sm font-medium mb-4 animate-fadeIn">
+                Chào mừng đến với TUQ Education
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-text-light dark:text-text-dark mb-6 leading-tight animate-fadeIn delay-200">
+                Chắp cánh ước mơ vào Đại học
+            </h1>
+            <p class="max-w-xl text-lg text-text-muted-light dark:text-text-muted-dark mb-10 animate-fadeIn delay-400">
+                TUQ Education tự hào là trung tâm luyện thi hàng đầu, cung cấp lộ trình học tập toàn diện và đội ngũ giáo viên giàu kinh nghiệm, giúp hàng ngàn học sinh chinh phục thành công kỳ thi THPT Quốc gia.
+            </p>
+            <div class="flex items-center gap-4 flex-wrap">
+                <a href='@Url.Action("KhoaHoc", "Home")'
+                   class="bg-primary text-white px-8 py-4 rounded-lg font-semibold flex items-center gap-2 hover:opacity-90 transition-opacity animate-fadeIn delay-600">
+                    <span class="material-icons">school</span>
+                    Tìm hiểu các khóa học
+                </a>
+                <a href='@Url.Action("LienHe", "Home")'
+                   class="bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark px-8 py-4 rounded-lg font-semibold flex items-center gap-2 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors animate-fadeIn delay-800">
+                    <span class="material-icons">phone</span>
+                    Tư vấn miễn phí
+                </a>
+            </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <i class="fa-solid fa-chart-line fa-3x text-success mb-3"></i>
-            <h5 class="fw-bold">Theo dõi kết quả</h5>
-            <p class="text-muted">Xem thống kê chi tiết từng bài thi và tiến bộ học tập của bạn theo thời gian.</p>
-        </div>
-        <div class="col-md-4 mb-4">
-            <i class="fa-solid fa-headset fa-3x text-warning mb-3"></i>
-            <h5 class="fw-bold">Hỗ trợ tận tâm</h5>
-            <p class="text-muted">Đội ngũ giảng viên và nhân viên kỹ thuật luôn sẵn sàng hỗ trợ bạn.</p>
+        <div class="relative">
+            <img alt="Smiling students studying together" class="rounded-2xl shadow-2xl shadow-primary/10 w-full transform transition-transform hover:scale-105 duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3aVwGadBkBBecawYPUJR-3dUKf4tUumqK0rxHKSt9VN1Xa30V2AKUNhv2eD41DnESIkjC1hFV7r_lFoydE_m19ibzE47La4eiW_3HYjyyYM8QwtxqaWUxNeIW5trPzCnhp1lTa4sdfWeAJRc4CEC4al_k61MzxHSD8iBZNPVNBu_nzGy105crFiGDCkFgcR-AuTEauc_QVY7ZsukpzE9n_jMs8na8c6Vk3GvHtzFbTrkATUCoVrHuEljgp1f0gZYtxBx94UsjsNg" />
+            <div class="absolute -bottom-8 -right-8 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 w-64 animate-fadeIn">
+                <p class="font-bold mb-2">Tỷ lệ đỗ Đại học Top đầu</p>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div class="bg-green-500 h-2.5 rounded-full" style="width: 95%"></div>
+                </div>
+                <p class="text-right mt-1 font-bold text-lg text-green-500">95%</p>
+                <p class="text-xs text-text-muted-light dark:text-text-muted-dark mt-1">Dựa trên kết quả của hơn 50,000 học viên.</p>
+            </div>
         </div>
     </div>
-</section>-->
+</section>
+
+<!-- Section Lý do chọn TUQ -->
+<section class="py-20 md:py-28">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Tại Sao Chọn TUQ Education?</h2>
+            <p class="text-lg text-text-muted-light dark:text-text-muted-dark mb-12">Chúng tôi không chỉ cung cấp kiến thức, mà còn truyền cảm hứng và xây dựng nền tảng vững chắc cho tương lai của bạn.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Card -->
+            <div class="bg-surface-light dark:bg-surface-dark p-8 rounded-2xl border border-gray-200 dark:border-gray-800 text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                <div class="bg-primary/10 text-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="material-symbols-outlined text-3xl">groups</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Đội ngũ giáo viên ưu tú</h3>
+                <p class="text-text-muted-light dark:text-text-muted-dark">Giáo viên giỏi, giàu kinh nghiệm, tận tâm và luôn đồng hành cùng học viên.</p>
+            </div>
+            <div class="bg-surface-light dark:bg-surface-dark p-8 rounded-2xl border border-gray-200 dark:border-gray-800 text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                <div class="bg-primary/10 text-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="material-symbols-outlined text-3xl">menu_book</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Lộ trình học cá nhân hóa</h3>
+                <p class="text-text-muted-light dark:text-text-muted-dark">Chương trình học được thiết kế riêng, phù hợp với năng lực và mục tiêu của từng học viên.</p>
+            </div>
+            <div class="bg-surface-light dark:bg-surface-dark p-8 rounded-2xl border border-gray-200 dark:border-gray-800 text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                <div class="bg-primary/10 text-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="material-symbols-outlined text-3xl">monitoring</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Công nghệ hỗ trợ 4.0</h3>
+                <p class="text-text-muted-light dark:text-text-muted-dark">Nền tảng học tập trực tuyến hiện đại, kho tài liệu phong phú và hệ thống thi thử bám sát đề thật.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="py-20 md:py-28 bg-surface-light dark:bg-surface-dark">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Đội Ngũ Giáo Viên Tận Tâm</h2>
+            <p class="text-lg text-text-muted-light dark:text-text-muted-dark mb-16">Những người thầy, người cô ưu tú sẽ là người đồng hành, truyền lửa và dẫn lối cho các em trên con đường chinh phục tri thức.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="text-center group">
+                <div class="relative overflow-hidden rounded-2xl">
+                    <img alt="Thầy Nguyễn Mạnh Cường" class="w-full h-80 object-cover rounded-2xl transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx-Es68AbIjzWUPRPgpERvqFLZhbN_UGmpD_qUkue84bWPbBN_Y6ydQpAF-RkOOt384Ze33RtglG-xqygEXOK_OJwqe7o6RO9wSbB0UFCsj6rRyaOOKaAXNJac5kwkeGILtUvu26duI71ur7T1a7NvZrN-rGGi7lQUeFPVDOMnAV0ez5TIRVEBSSdnvUkiJPcXoqASGJcbZxpjCRkOovfVAcGsfrggN8U4SssoofBtcj_OWmBadETDqhwYkNP1dCEMpabYcnYhFGU" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                        <a class="bg-primary-light text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-primary-dark transition-colors" href="#">Xem hồ sơ</a>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold mt-5 mb-1">Thầy Nguyễn Mạnh Cường</h3>
+                <p class="text-primary-light font-medium">Chuyên gia Luyện thi Toán</p>
+            </div>
+            <div class="text-center group">
+                <div class="relative overflow-hidden rounded-2xl">
+                    <img alt="Cô Vũ Thị Mai Phương" class="w-full h-80 object-cover rounded-2xl transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnbXVasKNvPXJJaKRcUMaCLXoN9_mRAmA5K69XI9GuK9BQke9diSu34dWgvTCRSPZB0BbtY62zpTy7kIAVPpHw9W-98yIbFmjWNPhxO4H5I0RhQtSVLv29IkI68crYA9xlLni5SlKp8DmwKbPXHcl2OFRiB4mSwVf78nBVFogc74LlNGvb-jPO7dKVZlGl5CiqgWh57nbcth7eyCosK-GZSdgv8Y4qwORDVFckkBuV8kGk5-tIR0YdzkZKnEV14Z3CwbsdeGCL0Yo" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                        <a class="bg-primary-light text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-primary-dark transition-colors" href="#">Xem hồ sơ</a>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold mt-5 mb-1">Cô Vũ Thị Mai Phương</h3>
+                <p class="text-primary-light font-medium">Chuyên gia Luyện thi Tiếng Anh</p>
+            </div>
+            <div class="text-center group">
+                <div class="relative overflow-hidden rounded-2xl">
+                    <img alt="Thầy Đỗ Ngọc Hà" class="w-full h-80 object-cover rounded-2xl transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOeLOxUN9cTf9w7w7Qlzhru15V0rRdV1jImQqTRyUW8uuF5rankG5OQiUgmLOo9jWVHmv9ncVGMlNItMsqs0-lgjfskIX8zp1xcso9myNKUBEhfwtRZT77_h6GTe5L9cKqRF4e9ArdrnnsmEiIVRkVmQjd00VhTncV0RK6en6HwE-3P3J63M9NuRwwWXdL5Vug3V5jXVKiLpHp3cObm2ZNc93KUmCJ0oHtjQlovE3xpF9zZW9d-GfRURh7wyZGGIimtPTUH-OFbfU" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                        <a class="bg-primary-light text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-primary-dark transition-colors" href="#">Xem hồ sơ</a>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold mt-5 mb-1">Thầy Đỗ Ngọc Hà</h3>
+                <p class="text-primary-light font-medium">Chuyên gia Luyện thi Vật Lý</p>
+            </div>
+            <div class="text-center group">
+                <div class="relative overflow-hidden rounded-2xl">
+                    <img alt="Cô Phạm Thị Thuý" class="w-full h-80 object-cover rounded-2xl transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHzIyYeOLhsvdyILyBOFstcCz_K7S5faqkTLyCwasrXuo8xYIsP3VV88pgnJEzYGuX89zSeAiwlT4idcGYIaTBshcKPFg_gLycC-vfoCQ4ppan9-I71Oo2RzZoWau2aQIEPjklJHpWDXhKXs9eVwZ9nNN7e1nvnAudoLJ6xxxWIyQtaDwgX0eG1kBpJ96j283vch7Pb_axVUFmGqfprepIykGquMyLsca44X_9NkhmsBb6Bk2p5SjFo1qzucxakJTGernl4jXXf7s" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                        <a class="bg-primary-light text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-primary-dark transition-colors" href="#">Xem hồ sơ</a>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold mt-5 mb-1">Cô Phạm Thị Thuý</h3>
+                <p class="text-primary-light font-medium">Chuyên gia Luyện thi Hoá học</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 relative bg-surface-light dark:bg-surface-dark overflow-hidden">
+    <!-- Header -->
+    <div class="container mx-auto px-4 text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Cảm Nhận Từ Học Viên</h2>
+        <p class="text-lg text-text-muted-light dark:text-text-muted-dark">
+            Niềm tin và sự thành công của học viên là động lực lớn nhất để chúng tôi không ngừng nỗ lực và phát triển.
+        </p>
+    </div>
+
+    <!-- Dòng 1: chạy trái -->
+    <div class="flex space-x-8 animate-scroll-left flex-nowrap w-max overflow-hidden">
+        <!-- Card 1 -->
+        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl w-[380px] flex-shrink-0 border border-gray-200 dark:border-gray-800">
+            <div class="flex items-center mb-4">
+                <img alt="Trần Gia Khánh" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCV4hjumkAy_4GGY2SGBkfl0iFyyItMAvjOAge1PCic5VlTa5tdestj576FTLBQVzkraVi2cldLf9yncKV5so-EnEAD7X8sI8jh5fzL1R4dHb5iuFNCwOPyTaL9junII5ibLbLViW_zT-FrWAaKEHMbzAbhAgGmsDRefE8mbqo9UONaKJdNDQQhZzxxp2TVnSY-1PfAFiiGtyjZSaUczATWb2vaKpjbfwOfGM1c0-Tneq2sRNA9NPjwbrm9G35uD9RMBECQygPL5aU" />
+                <div>
+                    <p class="font-bold">Trần Gia Khánh</p>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Đỗ NV1 - Đại học Bách Khoa</p>
+                </div>
+            </div>
+            <p class="text-text-muted-light dark:text-text-muted-dark">
+                "Em thực sự biết ơn các thầy cô tại TUQ Education. Phương pháp giảng dạy dễ hiểu và kho đề thi thử chất lượng đã giúp em từ một học sinh khá vươn lên đạt 28.5 điểm và đỗ vào ngành mình mơ ước."
+            </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl w-[380px] flex-shrink-0 border border-gray-200 dark:border-gray-800">
+            <div class="flex items-center mb-4">
+                <img alt="Nguyễn Phương Hà" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3eLQR8pM8V04m6_UrEznoqwPocY_1RhmeN8fiKw_l5AF3MZtxkoCNlTaEUgF9Oz0oAnLF7ViZQWWHWHACW8gJOc-iI5nZbYtj5p-r5EHZ7xM9jlYA35P7AIXSp3OA5RKarm5LawtigjLt4uLGiI-t580Z_GAhJf-lW-DlM4RsHwjTVpJYhTCy4OE9Y5cmJe8ptq-hJVCxfWQcuauTr2dURQr73iD-KQoNiBwiFM3s-5yYF0NhVuU9anaRLNgwvPNu3wvY134OtKA" />
+                <div>
+                    <p class="font-bold">Nguyễn Phương Hà</p>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Đỗ NV1 - Đại học Kinh tế Quốc dân</p>
+                </div>
+            </div>
+            <p class="text-text-muted-light dark:text-text-muted-dark">
+                "Nhờ lộ trình học cá nhân hóa tại trung tâm, em đã lấp đầy được các lỗ hổng kiến thức và cải thiện điểm số môn Toán từ 6 lên 9+. Em đã tự tin hơn rất nhiều khi bước vào phòng thi."
+            </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl w-[380px] flex-shrink-0 border border-gray-200 dark:border-gray-800">
+            <div class="flex items-center mb-4">
+                <img alt="Lê Minh Thu" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtZq0WibsDbsT7MPZsApN3cDJYliKp9AYdGUPV3oa6jT0gwXkMrLyv498BGv0gt2aQgk_F3EYNFlrwM4b47p_j282P7_fdHAXEcCwJ79iTNAd4H9xEBvNQP1LHJoXWaSc-rKXLNXgBKUq-Qgr5CkFAAG-9xF97L2wjJoo_rteRWlIJWTHs5kgDjTHPSdeRsqwV9B-Mx8-4vyKgaYTTxV4U--9rEpDNYjWPrclUEO3Eh8B7LIiZdRJUdbKWVVX_7B9-0HcspwtFLT0" />
+                <div>
+                    <p class="font-bold">Lê Minh Thu</p>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Đỗ NV1 - Đại học Ngoại thương</p>
+                </div>
+            </div>
+            <p class="text-text-muted-light dark:text-text-muted-dark">
+                "Môi trường học tập ở TUQ Education rất năng động và truyền cảm hứng. Các thầy cô không chỉ dạy kiến thức mà còn chia sẻ nhiều kinh nghiệm quý báu, giúp em có chiến lược làm bài thi hiệu quả."
+            </p>
+        </div>
+    </div>
+
+    <!-- Dòng 2: chạy phải -->
+    <div class="flex space-x-8 animate-scroll-right flex-nowrap w-max overflow-hidden mt-8">
+        <!-- Card 4 -->
+        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl w-[380px] flex-shrink-0 border border-gray-200 dark:border-gray-800">
+            <div class="flex items-center mb-4">
+                <img alt="Hoàng Minh Anh" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnbXVasKNvPXJJaKRcUMaCLXoN9_mRAmA5K69XI9GuK9BQke9diSu34dWgvTCRSPZB0BbtY62zpTy7kIAVPpHw9W-98yIbFmjWNPhxO4H5I0RhQtSVLv29IkI68crYA9xlLni5SlKp8DmwKbPXHcl2OFRiB4mSwVf78nBVFogc74LlNGvb-jPO7dKVZlGl5CiqgWh57nbcth7eyCosK-GZSdgv8Y4qwORDVFckkBuV8kGk5-tIR0YdzkZKnEV14Z3CwbsdeGCL0Yo" />
+                <div>
+                    <p class="font-bold">Hoàng Minh Anh</p>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Đỗ NV1 - Học viện Ngoại giao</p>
+                </div>
+            </div>
+            <p class="text-text-muted-light dark:text-text-muted-dark">
+                "Các lớp học bổ trợ và giải đáp thắc mắc cuối tuần thực sự là 'cứu cánh' cho em. Em có thể hỏi mọi vấn đề và luôn được giải đáp tận tình. Cảm ơn trung tâm rất nhiều ạ!"
+            </p>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl w-[380px] flex-shrink-0 border border-gray-200 dark:border-gray-800">
+            <div class="flex items-center mb-4">
+                <img alt="Phạm Tuấn Anh" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHzIyYeOLhsvdyILyBOFstcCz_K7S5faqkTLyCwasrXuo8xYIsP3VV88pgnJEzYGuX89zSeAiwlT4idcGYIaTBshcKPFg_gLycC-vfoCQ4ppan9-I71Oo2RzZoWau2aQIEPjklJHpWDXhKXs9eVwZ9nNN7e1nvnAudoLJ6xxxWIyQtaDwgX0eG1kBpJ96j283vch7Pb_axVUFmGqfprepIykGquMyLsca44X_9NkhmsBb6Bk2p5SjFo1qzucxakJTGernl4jXXf7s" />
+                <div>
+                    <p class="font-bold">Phạm Tuấn Anh</p>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Đỗ NV1 - Đại học Y Hà Nội</p>
+                </div>
+            </div>
+            <p class="text-text-muted-light dark:text-text-muted-dark">
+                "Khối B là một lựa chọn khó, nhưng các thầy cô ở TUQ đã giúp em hệ thống hóa kiến thức một cách khoa học. Các tài liệu độc quyền và những buổi học chuyên sâu thực sự vô giá."
+            </p>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl w-[380px] flex-shrink-0 border border-gray-200 dark:border-gray-800">
+            <div class="flex items-center mb-4">
+                <img alt="Phụ huynh Lan Phương" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOeLOxUN9cTf9w7w7Qlzhru15V0rRdV1jImQqTRyUW8uuF5rankG5OQiUgmLOo9jWVHmv9ncVGMlNItMsqs0-lgjfskIX8zp1xcso9myNKUBEhfwtRZT77_h6GTe5L9cKqRF4e9ArdrnnsmEiIVRkVmQjd00VhTncV0RK6en6HwE-3P3J63M9NuRwwWXdL5Vug3V5jXVKiLpHp3cObm2ZNc93KUmCJ0oHtjQlovE3xpF9zZW9d-GfRURh7wyZGGIimtPTUH-OFbfU" />
+                <div>
+                    <p class="font-bold">Phụ huynh Lan Phương</p>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Phụ huynh học sinh Bảo Châu</p>
+                </div>
+            </div>
+            <p class="text-text-muted-light dark:text-text-muted-dark">
+                "Tôi rất yên tâm khi gửi gắm con tại TUQ Education. Trung tâm thường xuyên cập nhật tình hình học tập, và tôi thấy con tiến bộ rõ rệt từng ngày. Cảm ơn trung tâm rất nhiều."
+            </p>
+        </div>
+
+        <!-- Card 7 -->
+        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl w-[380px] flex-shrink-0 border border-gray-200 dark:border-gray-800">
+            <div class="flex items-center mb-4">
+                <img alt="Nguyễn Ngọc Bảo Châu" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx-Es68AbIjzWUPRPgpERvqFLZhbN_UGmpD_qUkue84bWPbBN_Y6ydQpAF-RkOOt384Ze33RtglG-xqygEXOK_OJwqe7o6RO9wSbB0UFCsj6rRyaOOKaAXNJac5kwkeGILtUvu26duI71ur7T1a7NvZrN-rGGi7lQUeFPVDOMnAV0ez5TIRVEBSSdnvUkiJPcXoqASGJcbZxpjCRkOovfVAcGsfrggN8U4SssoofBtcj_OWmBadETDqhwYkNP1dCEMpabYcnYhFGU" />
+                <div>
+                    <p class="font-bold">Nguyễn Ngọc Bảo Châu</p>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Đỗ NV1 - Đại học Sư phạm Hà Nội</p>
+                </div>
+            </div>
+            <p class="text-text-muted-light dark:text-text-muted-dark">
+                "Em đã từng rất sợ môn Lý, nhưng thầy Hà ở TUQ đã giúp em tìm lại đam mê với môn học này. Cách thầy giảng bài rất lôi cuốn và logic. Em đã đạt 9.5 điểm thi THPTQG!"
+            </p>
+        </div>
+
+        <!-- Card 8 -->
+        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl w-[380px] flex-shrink-0 border border-gray-200 dark:border-gray-800">
+            <div class="flex items-center mb-4">
+                <img alt="Vũ Thành Nam" class="w-12 h-12 rounded-full mr-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtZq0WibsDbsT7MPZsApN3cDJYliKp9AYdGUPV3oa6jT0gwXkMrLyv498BGv0gt2aQgk_F3EYNFlrwM4b47p_j282P7_fdHAXEcCwJ79iTNAd4H9xEBvNQP1LHJoXWaSc-rKXLNXgBKUq-Qgr5CkFAAG-9xF97L2wjJoo_rteRWlIJWTHs5kgDjTHPSdeRsqwV9B-Mx8-4vyKgaYTTxV4U--9rEpDNYjWPrclUEO3Eh8B7LIiZdRJUdbKWVVX_7B9-0HcspwtFLT0" />
+                <div>
+                    <p class="font-bold">Vũ Thành Nam</p>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Đỗ NV1 - Học viện Công nghệ Bưu chính Viễn thông</p>
+                </div>
+            </div>
+            <p class="text-text-muted-light dark:text-text-muted-dark">
+                "Hệ thống học online của TUQ Education rất tiện lợi, giúp em có thể xem lại bài giảng bất cứ lúc nào. Điều này đã giúp em củng cố kiến thức rất hiệu quả trước kỳ thi quan trọng."
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 md:py-28 bg-background-light dark:bg-background-dark">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div class="lg:pr-12">
+                <div class="text-center lg:text-left">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Gửi Cảm Nhận Của Bạn</h2>
+                    <p class="text-lg text-text-muted-light dark:text-text-muted-dark mb-10">Chúng tôi luôn lắng nghe ý kiến của bạn để ngày càng hoàn thiện hơn. Hãy chia sẻ trải nghiệm của bạn tại TUQ Education!</p>
+                </div>
+            </div>
+            <div class="bg-surface-light dark:bg-surface-dark p-8 md:p-12 rounded-3xl border border-gray-200/80 dark:border-gray-800/80 shadow-lg">
+                <form action="#" class="space-y-6">
+                    <div>
+                        <label class="font-semibold mb-2 block text-sm" for="school-name">Tên trường</label>
+                        <input class="w-full bg-background-light dark:bg-background-dark border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:ring-primary-light focus:border-primary-light transition" id="school-name" placeholder="Ví dụ: THPT Chu Văn An" type="text" />
+                    </div>
+                    <div>
+                        <label class="font-semibold mb-2 block text-sm" for="course-registered">Các khóa học đã đăng ký/đã học</label>
+                        <select class="w-full bg-background-light dark:bg-background-dark border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:ring-primary-light focus:border-primary-light transition" id="course-registered">
+                            <option>Chọn khóa học</option>
+                            <option>Luyện thi THPT Quốc gia - Môn Toán</option>
+                            <option>Luyện thi THPT Quốc gia - Môn Vật Lý</option>
+                            <option>Luyện thi THPT Quốc gia - Môn Hóa học</option>
+                            <option>Luyện thi THPT Quốc gia - Môn Tiếng Anh</option>
+                            <option>Luyện thi Đánh giá năng lực</option>
+                            <option>Luyện đề chuyên sâu</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="font-semibold mb-2 block text-sm" for="feedback-message">Cảm nhận/Phản hồi của bạn</label>
+<textarea class="w-full bg-background-light dark:bg-background-dark border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:ring-primary-light focus:border-primary-light transition" id="feedback-message" placeholder="Chia sẻ cảm nhận của bạn về khóa học, giáo viên, hoặc bất cứ điều gì bạn muốn..." rows="5"></textarea>
+                    </div>
+                    <div class="text-right">
+                        <button class="bg-primary-light text-white px-8 py-3 rounded-lg font-bold hover:bg-primary-dark transition-colors flex items-center gap-2 text-base ml-auto" type="submit">
+                            <span class="material-symbols-outlined text-lg">send</span>
+                            Gửi cảm nhận
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA đăng ký -->
+<section class="py-20 md:py-28 bg-background-light dark:bg-background-dark">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-primary text-white rounded-3xl p-10 md:p-16 text-center bg-no-repeat bg-right shadow-lg">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Sẵn Sàng Chinh Phục Ước Mơ?</h2>
+            <p class="max-w-xl mx-auto mb-8 opacity-90">Hãy để TUQ Education đồng hành cùng bạn trên con đường vào cánh cổng Đại học. Đăng ký ngay để nhận tư vấn lộ trình học miễn phí!</p>
+            <a href='@Url.Action("LienHe", "Home")' class="w-full sm:w-auto inline-block bg-white text-primary py-4 px-8 rounded-lg font-semibold hover:bg-gray-200 transition-colors shadow-md">
+                Đăng ký tư vấn ngay
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Tailwind animation -->
+<style>
+    keyframes scroll-left {
+        0%
+
+    {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+
+    }
+
+    keyframes scroll-right {
+        0%
+
+    {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(50%);
+    }
+
+    }
+
+    .animate-scroll-left {
+        animation: scroll-left 40s linear infinite;
+    }
+
+    .animate-scroll-right {
+        animation: scroll-right 40s linear infinite;
+    }
+
+    keyframes fadeIn {
+        0%
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 1s ease forwards;
+    }
+
+    .delay-200 {
+        animation-delay: 0.2s;
+    }
+
+    .delay-400 {
+        animation-delay: 0.4s;
+    }
+
+    .delay-600 {
+        animation-delay: 0.6s;
+    }
+
+    .delay-800 {
+        animation-delay: 0.8s;
+    }
+</style>

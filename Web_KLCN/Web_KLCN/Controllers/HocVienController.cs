@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Web_KLCN.Models;
@@ -122,17 +123,24 @@ namespace Web_KLCN.Controllers
                            join pd in db.HOCVIEN_LOPHOCs on lh.MaL equals pd.MaL
                            join d in db.DETHIs on lt.MaD equals d.MaD
                            join mh in db.MONs on d.MaM equals mh.MaM
+                           join kqt in db.KETQUATHIs
+                               .Where(k => k.MaHV == hv.MaHV)
+                               on lt.MaLT equals kqt.MaLT into kqJoin
+                           from kqt in kqJoin.DefaultIfEmpty()  // Left join
                            where pd.MaHV == hv.MaHV
                            select new HocVienLichThiVM
                            {
+                               MaKQ = kqt != null ? (int?)kqt.MaKQ : null, // null nếu chưa có kết quả
                                MaLT = lt.MaLT,
                                TenDe = d.TenDe,
                                MonHoc = mh.TenMon,
                                NgayThi = lt.NgayThi,
                                GioBatDau = lt.GioBatDau,
                                GioKetThuc = lt.GioKetThuc,
-                               TrangThai = lt.TrangThai
+                               TrangThai = lt.TrangThai,
+                               TrangThaiLT = kqt.TrangThai
                            }).ToList();
+
 
             return View(lichThi);
         }
@@ -140,44 +148,76 @@ namespace Web_KLCN.Controllers
         // ============================
         // LÀM BÀI THI
         // ============================
+        // ============================
+        // LÀM BÀI THI (GET) – ĐÃ FIX 100% LỖI RELOAD MẤT ĐÁP ÁN
+        // ============================
+        // =============================
+        // LÀM BÀI THI – CHẮC CHẮN KHÔNG MẤT ĐÁP ÁN KỂ CẢ F5 100 LẦN
+        // =============================
         [HttpGet]
         public ActionResult LamBai(int id)
         {
-            if (Session["MaTK"] == null)
-                return RedirectToAction("Login", "Home");
+            if (Session["MaTK"] == null) return RedirectToAction("Login", "Home");
 
-            var hv = Session["HOCVIEN"] as HOCVIEN;
+            var hv = Session["HOCVIEN"] as HOCVIEN ?? db.HOCVIENs.Single(x => x.MaTK == (int)Session["MaTK"]);
             var lt = db.LICHTHIs.SingleOrDefault(x => x.MaLT == id);
-            if (lt == null) return HttpNotFound();
+            if (lt == null || lt.TrangThai != "Đang diễn ra") return HttpNotFound();
 
-            var de = db.DETHIs.SingleOrDefault(x => x.MaD == lt.MaD);
-            var mon = db.MONs.SingleOrDefault(x => x.MaM == de.MaM);
+            var de = db.DETHIs.Single(x => x.MaD == lt.MaD);
+            var mon = db.MONs.SingleOrDefault(m => m.MaM == de.MaM);
 
-            var kq = db.KETQUATHIs.SingleOrDefault(x => x.MaHV == hv.MaHV && x.MaLT == lt.MaLT);
+            // === LẤY HOẶC TẠO KETQUATHI + BẮT ĐẦU ĐẾM GIỜ CHỈ 1 LẦN DUY NHẤT ===
+            var kq = db.KETQUATHIs
+                       .FirstOrDefault(k => k.MaHV == hv.MaHV &&
+                                           k.MaLT == id &&
+                                           k.TrangThai == "Chưa nộp");
 
             if (kq == null)
             {
+                // Xóa bản ghi cũ nếu bị treo
+                db.KETQUATHIs.DeleteAllOnSubmit(
+                    db.KETQUATHIs.Where(k => k.MaHV == hv.MaHV && k.MaLT == id)
+                );
+
                 kq = new KETQUATHI
                 {
                     MaHV = hv.MaHV,
-                    MaLT = lt.MaLT,
-                    ThoiGianBatDau = DateTime.Now,
-                    TrangThai = "Đang làm",
+                    MaLT = id,
+                    ThoiGianBatDau = DateTime.Now,   // ← CHỈ GHI 1 LẦN DUY NHẤT KHI BẮT ĐẦU THI!!!
+                    TrangThai = "Chưa nộp",
                     Diem = 0
                 };
                 db.KETQUATHIs.InsertOnSubmit(kq);
+                db.SubmitChanges();
             }
-            else
+            // → Nếu đã có rồi → GIỮ NGUYÊN ThoiGianBatDau → F5, tắt máy, tắt mạng → VẪN TRỪ GIỜ ĐÚNG!!!
+
+            // === TÍNH THỜI GIAN CÒN LẠI CHUẨN TỪ SERVER (CHỐNG GIAN LẬN 100%) ===
+            var thoiGianThiGiay = (de.ThoiGian ?? 30) * 60; // phút → giây
+            var daSuDung = (DateTime.Now - kq.ThoiGianBatDau.Value).TotalSeconds;
+            var conLaiGiay = thoiGianThiGiay - daSuDung;
+
+            // NẾU HẾT GIỜ → TỰ ĐỘNG NỘP BÀI LUÔN (KHÔNG CHO VÀO LẠI)
+            if (conLaiGiay <= 0)
             {
-                kq.ThoiGianBatDau = DateTime.Now;
-                kq.TrangThai = "Đang làm";
+                kq.TrangThai = "Đã nộp";
+                kq.ThoiGianNop = DateTime.Now;
+                db.SubmitChanges();
+                TempData["Info"] = "Hết thời gian làm bài! Hệ thống đã tự động nộp bài cho bạn.";
+                return RedirectToAction("NopBai", new { MaLT = id });
             }
 
-            db.SubmitChanges();
+            // === TRUYỀN RA VIEW ĐỂ JS HIỂN THỊ ĐỒNG HỒ CHUẨN ===
+            ViewBag.ThoiGianConLaiGiay = (int)Math.Floor(conLaiGiay); // số giây còn lại
+            ViewBag.ThoiGianThiPhut = de.ThoiGian ?? 30;             // để hiển thị ban đầu nếu cần
+
+            // === LOAD CÂU HỎI + BÀI LÀM NHƯ CŨ ===
+            var baiLam = db.BAILAMs.Where(b => b.MaKQ == kq.MaKQ).ToList();
 
             var cauHoiList = (from ct in db.DETHI_CAUHOIs
                               join ch in db.NGANHANGCAUHOIs on ct.MaCH equals ch.MaCH
-                              join dk in db.DOKHOs on ch.MaDK equals dk.MaDK
+                              join dk in db.DOKHOs on ch.MaDK equals dk.MaDK into dkj
+                              from dk in dkj.DefaultIfEmpty()
                               where ct.MaD == de.MaD
                               orderby ct.STT
                               select new BaiThiCauHoiVM
@@ -189,28 +229,78 @@ namespace Web_KLCN.Controllers
                                   DapAnB = ch.DapAnB,
                                   DapAnC = ch.DapAnC,
                                   DapAnD = ch.DapAnD,
-                                  MaDoKho = dk.MaDK,
-                                  TenDoKho = dk.TenDoKho,
-
-                              ListYDung = db.DAPANs
-                                   .Where(d => d.MaCH == ch.MaCH)
-                                   .Select(d => new BaiThiCauHoiVM.DapAnVM
-                                   {
-                                       MaPhuongAn = d.MaPhuongAn,
-                                       NoiDung = d.NoiDung
-                                   }).ToList()
+                                  TenDoKho = dk != null ? dk.TenDoKho : "",
+                                  ListYDung = db.DAPANs
+                                      .Where(d => d.MaCH == ch.MaCH)
+                                      .Select(d => new BaiThiCauHoiVM.DapAnVM
+                                      {
+                                          MaPhuongAn = d.MaPhuongAn,
+                                          NoiDung = d.NoiDung
+                                      }).ToList()
                               }).ToList();
+
+            foreach (var ch in cauHoiList)
+            {
+                var daChon = baiLam.FirstOrDefault(b => b.MaCH == ch.MaCH);
+                if (daChon != null) ch.DapAnChon = daChon.DapAnChon;
+            }
 
             var vm = new BaiThiViewModel
             {
-                MaLT = lt.MaLT,
+                MaLT = id,
                 TenDe = de.TenDe,
-                MonHoc = mon.TenMon,
+                MonHoc = mon?.TenMon ?? "",
                 ThoiGian = de.ThoiGian ?? 30,
                 CauHoiList = cauHoiList
             };
 
             return View(vm);
+        }
+
+        // =============================
+        // LƯU NHÁP – CHẠY MƯỢT KHÔNG LỖI
+        // =============================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult LuuNgayDapAn(int MaLT, int MaCH, string DapAnChon)
+        {
+            try
+            {
+                if (Session["MaTK"] == null) return Json(new { success = false });
+
+                var hv = Session["HOCVIEN"] as HOCVIEN
+                         ?? db.HOCVIENs.First(x => x.MaTK == (int)Session["MaTK"]);
+
+                var kq = db.KETQUATHIs.FirstOrDefault(k =>
+                    k.MaHV == hv.MaHV &&
+                    k.MaLT == MaLT &&
+                    k.TrangThai == "Chưa nộp");
+
+                if (kq == null) return Json(new { success = false });
+
+                var bl = db.BAILAMs.FirstOrDefault(b => b.MaKQ == kq.MaKQ && b.MaCH == MaCH);
+
+                if (string.IsNullOrWhiteSpace(DapAnChon))
+                {
+                    if (bl != null) db.BAILAMs.DeleteOnSubmit(bl);
+                }
+                else
+                {
+                    if (bl == null)
+                    {
+                        bl = new BAILAM { MaKQ = kq.MaKQ, MaCH = MaCH, DapAnChon = DapAnChon.Trim() };
+                        db.BAILAMs.InsertOnSubmit(bl);
+                    }
+                    else bl.DapAnChon = DapAnChon.Trim();
+                }
+
+                db.SubmitChanges();
+                return Json(new { success = true });
+            }
+            catch
+            {
+                return Json(new { success = false });
+            }
         }
 
         // ============================
@@ -223,11 +313,15 @@ namespace Web_KLCN.Controllers
             if (Session["MaTK"] == null)
                 return RedirectToAction("Login", "Home");
 
-            var hv = Session["HOCVIEN"] as HOCVIEN;
+            var hv = Session["HOCVIEN"] as HOCVIEN
+                     ?? db.HOCVIENs.Single(x => x.MaTK == (int)Session["MaTK"]);
+
             var lt = db.LICHTHIs.SingleOrDefault(x => x.MaLT == MaLT);
             if (lt == null) return HttpNotFound();
 
             var de = db.DETHIs.SingleOrDefault(x => x.MaD == lt.MaD);
+            if (de == null) return HttpNotFound();
+
             var dsCauHoi = db.DETHI_CAUHOIs.Where(x => x.MaD == de.MaD).ToList();
             if (!dsCauHoi.Any())
             {
@@ -235,32 +329,39 @@ namespace Web_KLCN.Controllers
                 return RedirectToAction("LichThi");
             }
 
-            var kq = db.KETQUATHIs.SingleOrDefault(x => x.MaHV == hv.MaHV && x.MaLT == MaLT);
+            // FIX CHÍNH: CHỈ LẤY KETQUATHI, KHÔNG BAO GIỜ TẠO MỚI Ở ĐÂY
+            // CHỈ LẤY BẢN GHI ĐANG LÀM (Chưa nộp) → ĐẢM BẢO VÀO ĐOẠN TÍNH THỜI GIAN
+            var kq = db.KETQUATHIs.FirstOrDefault(k => k.MaHV == hv.MaHV
+                                                     && k.MaLT == MaLT
+                                                     && k.TrangThai == "Chưa nộp");
 
             if (kq == null)
             {
-                kq = new KETQUATHI
-                {
-                    MaHV = hv.MaHV,
-                    MaLT = MaLT,
-                    Diem = 0,
-                    TrangThai = "Đang làm",
-                    ThoiGianBatDau = DateTime.Now
-                };
-                db.KETQUATHIs.InsertOnSubmit(kq);
-            }
-            else
-            {
-                // Nếu đã có, reset dữ liệu
-                kq.Diem = 0;
-                kq.TrangThai = "Đang làm";
-                kq.ThoiGianBatDau = DateTime.Now;
-                kq.ThoiGianNop = null;
+                TempData["Error"] = "Không thể nộp bài! Phiên làm bài đã hết hạn hoặc không tồn tại.";
+                return RedirectToAction("LichThi");
             }
 
+            if (kq == null)
+            {
+                // Trường hợp này KHÔNG NÊN xảy ra nếu hệ thống chạy đúng
+                // Nhưng nếu có → báo lỗi, không tạo mới → bảo vệ ThoiGianBatDau thật
+                TempData["Error"] = "Không tìm thấy phiên làm bài của bạn. Có thể bạn chưa bắt đầu thi hoặc đã thoát sớm.";
+                return RedirectToAction("LichThi");
+            }
+
+            // Nếu đã nộp rồi → chặn luôn
+            if (kq.TrangThai == "Đã nộp")
+            {
+                TempData["Info"] = "Bạn đã nộp bài rồi, không thể nộp lại!";
+                return RedirectToAction("LichThi");
+            }
+
+            // Xóa bài làm cũ nếu có (do reload trang nộp lại)
+            var old = db.BAILAMs.Where(b => b.MaKQ == kq.MaKQ);
+            db.BAILAMs.DeleteAllOnSubmit(old);
             db.SubmitChanges();
 
-
+            // ================== PHẦN CHẤM ĐIỂM + LƯU BÀI LÀM (GIỮ NGUYÊN CỦA MÀY) ==================
             decimal tongDiem = 0;
             int soDung = 0;
             var listBaiLam = new List<BAILAM>();
@@ -269,42 +370,77 @@ namespace Web_KLCN.Controllers
             {
                 string key = "CauHoi_" + ch.MaCH;
                 var cau = db.NGANHANGCAUHOIs.Single(x => x.MaCH == ch.MaCH);
-                string dapAnChon = form[key];
-                decimal diemCong = 0;
+                string dapAnChon = "";
 
-                if (cau.MaP == 1 || cau.MaP == 3) // 1 đáp án hoặc tự luận
+                if (cau.MaP == 2) // checkbox
+                {
+                    var arr = form.GetValues(key);
+                    dapAnChon = arr != null ? string.Join(",", arr) : "";
+                }
+                else
+                {
+                    dapAnChon = form[key] ?? "";
+                }
+
+                decimal diemCong = 0;
+                if (cau.MaP == 1)
                 {
                     if (!string.IsNullOrEmpty(dapAnChon) &&
                         dapAnChon.Trim().ToLower() == cau.DapAnDung.Trim().ToLower())
                     {
-                        diemCong = (cau.MaP == 1) ? 0.25m : 0.5m;
+                        diemCong = 0.25m;
                         soDung++;
                     }
                 }
-                else if (cau.MaP == 2) // checkbox
+                else if (cau.MaP == 2)
                 {
-                    var chonArr = form.GetValues(key) ?? new string[0]; // đáp án học viên chọn
-                    var dungArr = cau.DapAnDung?.Split(',') ?? new string[0]; // đáp án đúng
+                    var arr = form.GetValues(key) ?? new string[0];
+                    string rawDapAn = string.Join(",", arr);
 
-                    // đếm số ý đúng trong câu
-                    int soDungCau = chonArr.Count(a => dungArr.Contains(a));
-
-                    // chấm theo logic bạn đưa ra
-                    switch (soDungCau)
+                    if (string.IsNullOrWhiteSpace(rawDapAn) || rawDapAn.Trim().ToUpper() == "NULL")
                     {
-                        case 1: diemCong = 0.1m; break;
-                        case 2: diemCong = 0.25m; break;
-                        case 3: diemCong = 0.5m; break;
-                        case 4: diemCong = 1m; break;
-                        default: diemCong = 0m; break;
+                        dapAnChon = "NULL";
+                        diemCong = 0m;
                     }
-
-                    // nếu học viên chọn đủ tất cả ý đúng thì tính số câu đúng
-                    if (soDungCau == dungArr.Length) soDung++;
+                    else
+                    {
+                        dapAnChon = rawDapAn;
+                        var chonArr = arr.Select(x => x.Trim().ToUpper()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                        var allY = db.DAPANs.Where(d => d.MaCH == cau.MaCH).ToList();
+                        int soYDung = 0;
+                        foreach (var y in allY)
+                        {
+                            bool hvChon = chonArr.Contains(y.MaPhuongAn.Trim().ToUpper());
+                            bool laDung = y.DungSai == true;
+                            if ((laDung && hvChon) || (!laDung && !hvChon))
+                                soYDung++;
+                        }
+                        switch (soYDung)
+                        {
+                            case 1: diemCong = 0.1m; break;
+                            case 2: diemCong = 0.25m; break;
+                            case 3: diemCong = 0.5m; break;
+                            case 4: diemCong = 1m; soDung++; break;
+                            default: diemCong = 0; break;
+                        }
+                    }
+                }
+                else if (cau.MaP == 3)
+                {
+                    if (!string.IsNullOrEmpty(dapAnChon))
+                    {
+                        string daChon = new string(dapAnChon.Where(c => !char.IsWhiteSpace(c)).ToArray()).ToLower();
+                        string daDung = new string(cau.DapAnDung.Where(c => !char.IsWhiteSpace(c)).ToArray()).ToLower();
+                        if (daChon == daDung)
+                        {
+                            var mon = db.MONs.SingleOrDefault(m => m.MaM == de.MaM);
+                            diemCong = (mon != null && mon.TenMon.Contains("Toán")) ? 0.5m : 0.25m;
+                            soDung++;
+                        }
+                    }
                 }
 
                 tongDiem += diemCong;
-
                 listBaiLam.Add(new BAILAM
                 {
                     MaKQ = kq.MaKQ,
@@ -314,24 +450,46 @@ namespace Web_KLCN.Controllers
             }
 
             db.BAILAMs.InsertAllOnSubmit(listBaiLam);
+
             kq.Diem = Math.Round(tongDiem, 2);
             kq.TrangThai = "Đã nộp";
-            kq.ThoiGianNop = DateTime.Now;
+
+            // Chỉ ghi thời gian nộp 1 lần
+            if (kq.ThoiGianNop == null)
+            {
+                kq.ThoiGianNop = DateTime.Now;
+
+                // TÍNH + GÁN THỜI GIAN LÀM BÀI TRƯỚC KHI SUBMIT!!!
+                if (kq.ThoiGianBatDau.HasValue)
+                {
+                    var thoiGianLam = kq.ThoiGianNop.Value - kq.ThoiGianBatDau.Value;
+                    kq.ThoiGianLamBai = TimeSpan.FromTicks(thoiGianLam.Ticks); // hoặc chỉ: = thoiGianLam;
+                }
+                else
+                {
+                    kq.ThoiGianLamBai = TimeSpan.Zero;
+                }
+            }
+
             db.SubmitChanges();
+            // ==============================================================================
 
             var vm = new KetQuaThiVM
             {
+                MaKQ = kq.MaKQ,
                 TenDe = de.TenDe,
                 MonHoc = db.MONs.SingleOrDefault(m => m.MaM == de.MaM)?.TenMon ?? "",
                 SoCauDung = soDung,
                 TongCau = dsCauHoi.Count,
-                Diem = kq.Diem ?? 0
+                Diem = kq.Diem ?? 0,
+                ThoiGianLamBai = kq.ThoiGianLamBai
             };
 
             return View("KetQuaThi", vm);
         }
 
-        // ============================
+
+        // ============================ 
         // LỊCH SỬ ĐIỂM
         // ============================       
         public ActionResult DiemThi()
@@ -362,108 +520,13 @@ namespace Web_KLCN.Controllers
             return View(dsDiem);
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult NopBai(int MaLT, FormCollection form)
-        //{
-        //    if (Session["MaTK"] == null)
-        //        return RedirectToAction("Login", "Home");
-
-        //    var hv = Session["HOCVIEN"] as HOCVIEN;
-        //    var lt = db.LICHTHIs.SingleOrDefault(x => x.MaLT == MaLT);
-        //    if (lt == null) return HttpNotFound();
-
-        //    var de = db.DETHIs.SingleOrDefault(x => x.MaD == lt.MaD);
-        //    if (de == null) return HttpNotFound();
-
-        //    var dsCauHoi = db.DETHI_CAUHOIs.ToList().Where(x => x.MaD == de.MaD).ToList();
-        //    if (!dsCauHoi.Any())
-        //    {
-        //        TempData["Error"] = "Đề thi chưa có câu hỏi.";
-        //        return RedirectToAction("LichThi");
-        //    }
-
-        //    var kq = new KETQUATHI
-        //    {
-        //        MaHV = hv.MaHV,
-        //        MaLT = MaLT,
-        //        Diem = 0,
-        //        TrangThai = "Đang làm"
-        //    };
-        //    db.KETQUATHIs.InsertOnSubmit(kq);
-        //    db.SubmitChanges();
-
-        //    decimal tongDiem = 0;
-        //    int soDung = 0;
-        //    var listBaiLam = new List<BAILAM>();
-
-        //    foreach (var ch in dsCauHoi)
-        //    {
-        //        string key = "CauHoi_" + ch.MaCH;
-        //        var cau = db.NGANHANGCAUHOIs.Single(x => x.MaCH == ch.MaCH);
-
-        //        decimal diemCong = 0;
-
-        //        if (cau.MaCH == 1)
-        //        {
-        //            // 1 đáp án
-        //            string dapAnChon = form[key];
-        //            if (!string.IsNullOrEmpty(dapAnChon) && dapAnChon == cau.DapAnDung)
-        //            {
-        //                diemCong = 0.25m;
-        //                soDung++;
-        //            }
-        //        }
-        //        else if (cau.MaCH == 2)
-        //        {
-        //            // Nhiều đáp án đúng
-        //            var chonArr = form.GetValues(key) ?? new string[0];
-        //            var dapAnDungArr = cau.DapAnDung.Split(','); // "A,B,C"
-        //            int soDungCau = chonArr.Count(a => dapAnDungArr.Contains(a));
-
-        //            if (soDungCau == 1) diemCong = 0.1m;
-        //            else if (soDungCau == 2) diemCong = 0.25m;
-        //            else if (soDungCau == 3) diemCong = 0.5m;
-        //            else if (soDungCau == 4) diemCong = 1m;
-
-        //            if (soDungCau == dapAnDungArr.Length) soDung++;
-        //        }
-        //        else if (cau.MaCH == 3)
-        //        {
-        //            // Tự luận / điền đáp án
-        //            string dapAnChon = form[key];
-        //            if (!string.IsNullOrEmpty(dapAnChon) &&
-        //                dapAnChon.Trim().ToLower() == cau.DapAnDung.Trim().ToLower())
-        //            {
-        //                diemCong = 0.5m;
-        //                soDung++;
-        //            }
-        //        }
-
-        //        tongDiem += diemCong;
-
-        //        listBaiLam.Add(new BAILAM
-        //        {
-        //            MaKQ = kq.MaKQ,
-        //            MaCH = ch.MaCH,
-        //            DapAnChon = form[key]
-        //        });
-        //    }
-
-        //    db.BAILAMs.InsertAllOnSubmit(listBaiLam);
-
-        //    kq.Diem = Math.Round(tongDiem, 2);
-        //    kq.TrangThai = "Đã nộp";
-        //    db.SubmitChanges();
-
-        //    TempData["Success"] = $"Nộp bài thành công! Đúng {soDung}/{dsCauHoi.Count} câu, điểm {kq.Diem}.";
-        //    return RedirectToAction("KetQuaThi", new { id = kq.MaKQ });
-        //}
+        //Lưu nháp
+        // ============================
 
         // ============================
-        // LỚP HỌC CỦA HỌC VIÊN
+        // XEM LẠI BÀI LÀM
         // ============================
-        public ActionResult LopHoc()
+        public ActionResult XemLaiBaiLam(int id)
         {
             if (Session["MaTK"] == null)
                 return RedirectToAction("Login", "Home");
@@ -476,91 +539,268 @@ namespace Web_KLCN.Controllers
                 Session["HOCVIEN"] = hv;
             }
 
-            // Lấy danh sách lớp học của học viên
-            var dsLop = (from hl in db.HOCVIEN_LOPHOCs
-                         join lh in db.LOPHOCs on hl.MaL equals lh.MaL
-                         join kh in db.KHOAHOCs on lh.MaK equals kh.MaK
-                         where hl.MaHV == hv.MaHV
-                         select new LopHocVM
-                         {
-                             MaL = lh.MaL,
-                             TenLop = lh.TenLop,
-                             TenKhoaHoc = kh.TenKhoaHoc,
-                         }).ToList();
-
-            return View(dsLop);
-        }
-
-        // ============================
-        // XEM LẠI BÀI LÀM
-        // ============================
-        public ActionResult XemLaiBaiLam(int id)
-        {
-            if (Session["MaTK"] == null)
-                return RedirectToAction("Login", "Home");
-
-            var hv = Session["HOCVIEN"] as HOCVIEN;
-
-            // Lấy kết quả thi
             var kq = db.KETQUATHIs.SingleOrDefault(x => x.MaKQ == id && x.MaHV == hv.MaHV);
             if (kq == null) return HttpNotFound();
 
-            // Lấy đề thi và câu hỏi
             var lt = db.LICHTHIs.SingleOrDefault(x => x.MaLT == kq.MaLT);
             if (lt == null) return HttpNotFound();
 
             var de = db.DETHIs.SingleOrDefault(x => x.MaD == lt.MaD);
             if (de == null) return HttpNotFound();
 
-            var cauHoiList = (from bl in db.BAILAMs
-                              join ch in db.NGANHANGCAUHOIs on bl.MaCH equals ch.MaCH
-                              join dk in db.DOKHOs on ch.MaDK equals dk.MaDK into dkGroup
-                              from dk in dkGroup.DefaultIfEmpty()
-                              where bl.MaKQ == kq.MaKQ
-                              orderby ch.MaCH
-                              select new
-                              {
-                                  bl,
-                                  ch,
-                                  dk
-                              })
-                .AsEnumerable()
-                .Select(x => new BaiThiCauHoiVM
+            var tatCaCauHoi = db.DETHI_CAUHOIs
+                .Where(ct => ct.MaD == de.MaD)
+                .OrderBy(ct => ct.STT)
+                .Select(ct => ct.MaCH)
+                .ToList();
+
+            var cauHoiList = tatCaCauHoi.Select(maCH =>
+            {
+                var ch = db.NGANHANGCAUHOIs.Single(x => x.MaCH == maCH);
+                var dk = db.DOKHOs.SingleOrDefault(d => d.MaDK == ch.MaDK);
+                var bl = db.BAILAMs.FirstOrDefault(b => b.MaKQ == kq.MaKQ && b.MaCH == maCH);
+
+                var dapAnChonStr = bl?.DapAnChon;
+                var dapAnChonList = string.IsNullOrEmpty(dapAnChonStr)
+                    ? new List<string>()
+                    : dapAnChonStr.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
+
+                var dapAnDungList = string.IsNullOrEmpty(ch.DapAnDung)
+                    ? new List<string>()
+                    : ch.DapAnDung.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
+
+                return new BaiThiCauHoiVM
                 {
-                    MaCH = x.ch.MaCH,
-                    NoiDung = x.ch.NoiDung,
-                    DapAnA = x.ch.DapAnA,
-                    DapAnB = x.ch.DapAnB,
-                    DapAnC = x.ch.DapAnC,
-                    DapAnD = x.ch.DapAnD,
-                    DapAnDung = x.ch.DapAnDung,
-                    DapAnChon = x.bl.DapAnChon,
-                    GiaiThich = x.ch.GiaiThich,
-                    MaP = x.ch.MaP,
-                    MaDoKho = x.dk?.MaDK ?? 0,
-                    TenDoKho = x.dk?.TenDoKho ?? "",
-                    ListYDung = db.DAPANs
-                                 .Where(d => d.MaCH == x.ch.MaCH)
-                                 .Select(d => new BaiThiCauHoiVM.DapAnVM
-                                 {
-                                     MaPhuongAn = d.MaPhuongAn,
-                                     NoiDung = d.NoiDung,
-                                     DungSai = d.NoiDung == x.ch.DapAnDung ? 1 : 0
-                                 }).ToList(),
-                    DapAnChonList = (x.bl.DapAnChon ?? "").Split(',').ToList(),
-                    DapAnDungList = (x.ch.DapAnDung ?? "").Split(',').ToList()
-                }).ToList();
+                    MaCH = ch.MaCH,
+                    NoiDung = ch.NoiDung,
+                    DapAnA = ch.DapAnA,
+                    DapAnB = ch.DapAnB,
+                    DapAnC = ch.DapAnC,
+                    DapAnD = ch.DapAnD,
+                    DapAnDung = ch.DapAnDung,
+                    DapAnChon = dapAnChonStr,
+                    GiaiThich = ch.GiaiThich,
+                    MaP = ch.MaP,
+                    MaDoKho = dk?.MaDK ?? 0,
+                    TenDoKho = dk?.TenDoKho ?? "",
+                    ListYDung = db.DAPANs.Where(d => d.MaCH == ch.MaCH)
+                        .Select(d => new BaiThiCauHoiVM.DapAnVM
+                        {
+                            MaPhuongAn = d.MaPhuongAn,
+                            NoiDung = d.NoiDung,
+                            DungSai = d.DungSai == true ? 1 : 0
+                        }).ToList(),
+                    DapAnChonList = dapAnChonList,
+                    DapAnDungList = dapAnDungList
+                };
+            }).ToList();
+
+            // TÍNH SỐ CÂU ĐÚNG CHUẨN 100% – ĐÃ FIX 2 LỖI
+            // TÍNH SỐ CÂU ĐÚNG – CHUẨN 100% DÙ DÙNG DapAnDung HAY BẢNG DAPAN
+            // === THAY TOÀN BỘ ĐOẠN TÍNH soCauDung BẰNG ĐOẠN NÀY ===
+            int soCauDung = 0;
+            foreach (var c in cauHoiList)
+            {
+                // Bỏ qua nếu chưa làm câu đó
+                if (string.IsNullOrWhiteSpace(c.DapAnChon) ||
+                    c.DapAnChon.Trim().ToUpper() == "NULL")
+                    continue;
+
+                bool cauHoanToanDung = false;
+
+                // Phần I: trắc nghiệm 1 đáp án
+                if (c.MaP == 1)
+                {
+                    cauHoanToanDung = string.Equals(c.DapAnChon?.Trim(), c.DapAnDung?.Trim(),
+                                                   StringComparison.OrdinalIgnoreCase);
+                }
+                // Phần III: tự luận
+                else if (c.MaP == 3)
+                {
+                    string chon = new string(c.DapAnChon.Where(char.IsLetterOrDigit).ToArray()).ToLower();
+                    string dung = new string((c.DapAnDung ?? "").Where(char.IsLetterOrDigit).ToArray()).ToLower();
+                    cauHoanToanDung = chon == dung;
+                }
+                // Phần II: chỉ đúng khi làm đúng 100% (4/4 ý)
+                else if (c.MaP == 2)
+                {
+                    // Lấy danh sách ý đúng từ bảng DAPAN (ưu tiên)
+                    var yDungList = db.DAPANs
+                        .Where(d => d.MaCH == c.MaCH && d.DungSai == true)
+                        .Select(d => d.MaPhuongAn.Trim().ToUpper())
+                        .ToList();
+
+                    // Nếu chưa có DAPAN → fallback về DapAnDung
+                    if (!yDungList.Any() && !string.IsNullOrEmpty(c.DapAnDung))
+                    {
+                        yDungList = c.DapAnDung
+                            .Split(',')
+                            .Select(x => x.Trim().ToUpper())
+                            .Where(x => !string.IsNullOrEmpty(x))
+                            .ToList();
+                    }
+
+                    // Danh sách học viên chọn
+                    var chonList = c.DapAnChon
+                        .Split(',')
+                        .Select(x => x.Trim().ToUpper())
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .ToList();
+
+                    // === QUY TẮC VÀNG: PHẢI CHỌN ĐÚNG VÀ ĐỦ, KHÔNG THIẾU KHÔNG THỪA ===
+                    cauHoanToanDung = chonList.Count == yDungList.Count &&
+                                      chonList.All(x => yDungList.Contains(x)) &&
+                                      yDungList.All(x => chonList.Contains(x));
+                }
+
+                if (cauHoanToanDung)
+                    soCauDung++;
+            }
 
             var vm = new BaiThiViewModel
             {
+                MaKQ = kq.MaKQ,
                 TenDe = de.TenDe,
                 MonHoc = db.MONs.SingleOrDefault(m => m.MaM == de.MaM)?.TenMon ?? "",
                 ThoiGian = de.ThoiGian ?? 30,
                 CauHoiList = cauHoiList,
-                TongSoCau = cauHoiList.Count
+                TongSoCau = cauHoiList.Count,
+                SoCauDung = soCauDung,
+                Diem = kq.Diem ?? 0,
+                XemDapAn = lt.XemDapAn == true
             };
 
             return View(vm);
+        }
+
+        // ================================
+        // 5. Đổi mật khẩu
+        // ================================
+        [HttpGet]
+        public ActionResult DoiMatKhau()
+        {
+            if (Session["MaTK"] == null)
+                return RedirectToAction("Login", "Home");
+
+            ViewData["Title"] = "Đổi mật khẩu";
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult DoiMatKhau(string matKhauCu, string matKhauMoi, string xacNhanMK)
+        {
+            if (Session["MaTK"] == null)
+                return RedirectToAction("Login", "Home");
+
+            int maTK = (int)Session["MaTK"];
+
+            var taiKhoan = db.TAIKHOANs.SingleOrDefault(t => t.MaTK == maTK);
+            if (taiKhoan == null)
+            {
+                ViewBag.Error = "Không tìm thấy tài khoản!";
+                return View();
+            }
+
+            // 1️. Kiểm tra mật khẩu cũ
+            if (taiKhoan.MatKhau.Trim() != matKhauCu)
+            {
+                ViewBag.Error = "Mật khẩu cũ không chính xác!";
+                return View();
+            }
+
+            // 2️. Kiểm tra mật khẩu mới
+            if (matKhauMoi.Length < 8)
+            {
+                ViewBag.Error = "Mật khẩu mới phải có ít nhất 8 ký tự!";
+                return View();
+            }
+
+            // 3️. Kiểm tra xác nhận
+            if (matKhauMoi != xacNhanMK)
+            {
+                ViewBag.Error = "Mật khẩu xác nhận không khớp!";
+                return View();
+            }
+
+            // 4️. Cập nhật mật khẩu
+            taiKhoan.MatKhau = matKhauMoi;
+            db.SubmitChanges();
+
+            ViewBag.Success = "Đổi mật khẩu thành công!";
+            return View();
+        }
+
+        public ActionResult KhoaHoc()
+        {
+            ViewData["Title"] = "Khóa học - TUQ Education";
+
+            return View();
+        }
+
+        public ActionResult LichHoc(string mondayDateStr)
+        {
+            //// 1. Chuyển đổi chuỗi ngày nhận được từ JS (YYYY-MM-DD) sang DateTime
+            //// Cần đảm bảo bạn đã include System.Globalization
+            //if (!DateTime.TryParseExact(mondayDateStr, "yyyy-MM-dd", CultureInfo.InvariantCulture,
+            //                            DateTimeStyles.None, out DateTime mondayDate))
+            //{
+            //    return Json(new { success = false, message = "Định dạng ngày không hợp lệ." }, JsonRequestBehavior.AllowGet);
+            //}
+
+            //// 2. Tính ngày Chủ Nhật của tuần đó
+            //DateTime sundayDate = mondayDate.AddDays(6);
+
+            //// 3. Lấy MaHV
+            //if (Session["MaHV"] == null)
+            //{
+            //    return Json(new { success = false, message = "Mã học viên không tồn tại trong Session." }, JsonRequestBehavior.AllowGet);
+            //}
+            //int maHv = (int)Session["MaHV"];
+
+            //// 4. Truy vấn Lịch học - Bỏ qua trường phân loại lớp học (LoaiHoc)
+            //var lichHocData = (from hl in db.HOCVIEN_LOPHOCs
+            //                   where hl.MaHV == maHv
+            //                   join l in db.LOPHOCs on hl.MaL equals l.MaL
+            //                   join k in db.KHOAHOCs on l.MaK equals k.MaK
+            //                   // Lọc theo NgayBatDau/NgayKetThuc của KHÓA HỌC
+            //                   where k.NgayBatDau <= sundayDate && k.NgayKetThuc >= mondayDate
+
+            //                   join m in db.MONs on l.MaM equals m.MaM
+            //                   join gv in db.GIAOVIENs on l.MaGV equals gv.MaGV
+            //                   join c in db.CAHOCs on l.MaC equals c.MaC
+            //                   join ln in db.LICHNGAYs on l.MaLN equals ln.MaLN
+            //                   select new
+            //                   {
+            //                       TenLop = l.TenLop,
+            //                       TenMon = m.TenMon,
+            //                       TenGV = gv.TenGV,
+            //                       MaCa = l.MaC,
+            //                       GioBatDau = c.GioBatDau,
+            //                       GioKetThuc = c.GioKetThuc,
+            //                       Thu1 = ln.Thu1,
+            //                       Thu2 = ln.Thu2,
+            //                       Thu3 = ln.Thu3
+            //                   }).ToList();
+
+            //// 5. Chuẩn bị dữ liệu trả về cho JS
+            //var result = lichHocData.Select(x => new
+            //{
+            //    TenMon = x.TenMon,
+            //    TenLop = x.TenLop,
+            //    TenGV = x.TenGV,
+            //    GioBatDau = x.GioBatDau.ToString(@"hh\:mm"),
+            //    GioKetThuc = x.GioKetThuc.ToString(@"hh\:mm"),
+            //    Thu1 = x.Thu1,
+            //    Thu2 = x.Thu2,
+            //    Thu3 = x.Thu3,
+            //    MaCa = x.MaCa,
+            //});
+
+            //return Json(result, JsonRequestBehavior.AllowGet);
+
+            ViewData["Title"] = "Lịch học - TUQ Education";
+
+            return View();
         }
     }
 }

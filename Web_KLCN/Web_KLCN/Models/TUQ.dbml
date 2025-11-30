@@ -2,10 +2,12 @@
   <Table Name="dbo.BAILAM" Member="BAILAMs">
     <Type Name="BAILAM">
       <Column Name="MaBL" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="MaKQ" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MaKQ" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaKQLT" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="MaCH" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="DapAnChon" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-      <Association Name="KETQUATHI_BAILAM" Member="KETQUATHI" ThisKey="MaKQ" OtherKey="MaKQ" Type="KETQUATHI" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="KETQUALUYENTHI_BAILAM" Member="KETQUALUYENTHI" ThisKey="MaKQLT" OtherKey="MaKQLT" Type="KETQUALUYENTHI" IsForeignKey="true" DeleteRule="CASCADE" />
+      <Association Name="KETQUATHI_BAILAM" Member="KETQUATHI" ThisKey="MaKQ" OtherKey="MaKQ" Type="KETQUATHI" IsForeignKey="true" DeleteRule="CASCADE" />
       <Association Name="NGANHANGCAUHOI_BAILAM" Member="NGANHANGCAUHOI" ThisKey="MaCH" OtherKey="MaCH" Type="NGANHANGCAUHOI" IsForeignKey="true" />
     </Type>
   </Table>
@@ -20,6 +22,15 @@
       <Association Name="TAIKHOAN_GIAOVIEN" Member="GIAOVIENs" ThisKey="MaTK" OtherKey="MaTK" Type="GIAOVIEN" />
       <Association Name="TAIKHOAN_HOCVIEN" Member="HOCVIENs" ThisKey="MaTK" OtherKey="MaTK" Type="HOCVIEN" />
       <Association Name="PHANQUYEN_TAIKHOAN" Member="PHANQUYEN" ThisKey="MaPQ" OtherKey="MaPQ" Type="PHANQUYEN" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAHOC" Member="CAHOCs">
+    <Type Name="CAHOC">
+      <Column Name="MaC" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TenCa" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="GioBatDau" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
+      <Column Name="GioKetThuc" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
+      <Association Name="CAHOC_LOPHOC" Member="LOPHOCs" ThisKey="MaC" OtherKey="MaC" Type="LOPHOC" />
     </Type>
   </Table>
   <Table Name="dbo.DAPAN" Member="DAPANs">
@@ -40,6 +51,7 @@
       <Column Name="ThoiGian" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="SoCau" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="NgayTao" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Column Name="LuotDung" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Association Name="DETHI_DETHI_CAUHOI" Member="DETHI_CAUHOIs" ThisKey="MaD" OtherKey="MaD" Type="DETHI_CAUHOI" />
       <Association Name="DETHI_LICHTHI" Member="LICHTHIs" ThisKey="MaD" OtherKey="MaD" Type="LICHTHI" />
@@ -72,6 +84,8 @@
       <Column Name="Email" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="DiaChi" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
       <Column Name="TrinhDo" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="ChuyenMon" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="CCCD" Type="System.String" DbType="Char(12)" CanBeNull="true" />
       <Column Name="SDT" Type="System.String" DbType="Char(10)" CanBeNull="true" />
       <Column Name="AnhDaiDien" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
@@ -98,11 +112,13 @@
       <Column Name="GioiTinh" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
       <Column Name="NgaySinh" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="Email" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="CCCD" Type="System.String" DbType="Char(12)" CanBeNull="true" />
       <Column Name="SDT" Type="System.String" DbType="Char(10)" CanBeNull="true" />
       <Column Name="DiaChi" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
       <Column Name="AnhDaiDien" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Association Name="HOCVIEN_HOCVIEN_LOPHOC" Member="HOCVIEN_LOPHOCs" ThisKey="MaHV" OtherKey="MaHV" Type="HOCVIEN_LOPHOC" />
+      <Association Name="HOCVIEN_KETQUALUYENTHI" Member="KETQUALUYENTHIs" ThisKey="MaHV" OtherKey="MaHV" Type="KETQUALUYENTHI" />
       <Association Name="HOCVIEN_KETQUATHI" Member="KETQUATHIs" ThisKey="MaHV" OtherKey="MaHV" Type="KETQUATHI" />
       <Association Name="TAIKHOAN_HOCVIEN" Member="TAIKHOAN" ThisKey="MaTK" OtherKey="MaTK" Type="TAIKHOAN" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
@@ -115,6 +131,19 @@
       <Association Name="LOPHOC_HOCVIEN_LOPHOC" Member="LOPHOC" ThisKey="MaL" OtherKey="MaL" Type="LOPHOC" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.KETQUALUYENTHI" Member="KETQUALUYENTHIs">
+    <Type Name="KETQUALUYENTHI">
+      <Column Name="MaKQLT" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="MaHV" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Diem" Type="System.Decimal" DbType="Decimal(5,2)" CanBeNull="true" />
+      <Column Name="ThoiGianBatDau" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Column Name="ThoiGianNop" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Column Name="ThoiGianLamBai" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
+      <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Association Name="KETQUALUYENTHI_BAILAM" Member="BAILAMs" ThisKey="MaKQLT" OtherKey="MaKQLT" Type="BAILAM" />
+      <Association Name="HOCVIEN_KETQUALUYENTHI" Member="HOCVIEN" ThisKey="MaHV" OtherKey="MaHV" Type="HOCVIEN" IsForeignKey="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.KETQUATHI" Member="KETQUATHIs">
     <Type Name="KETQUATHI">
       <Column Name="MaKQ" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -123,22 +152,11 @@
       <Column Name="Diem" Type="System.Decimal" DbType="Decimal(5,2)" CanBeNull="true" />
       <Column Name="ThoiGianBatDau" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
       <Column Name="ThoiGianNop" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Column Name="ThoiGianLamBai" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Association Name="KETQUATHI_BAILAM" Member="BAILAMs" ThisKey="MaKQ" OtherKey="MaKQ" Type="BAILAM" />
       <Association Name="HOCVIEN_KETQUATHI" Member="HOCVIEN" ThisKey="MaHV" OtherKey="MaHV" Type="HOCVIEN" IsForeignKey="true" />
       <Association Name="LICHTHI_KETQUATHI" Member="LICHTHI" ThisKey="MaLT" OtherKey="MaLT" Type="LICHTHI" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.KHOAHOC" Member="KHOAHOCs">
-    <Type Name="KHOAHOC">
-      <Column Name="MaK" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="TenKhoaHoc" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="NamHoc" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
-      <Column Name="NgayBatDau" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
-      <Column Name="NgayKetThuc" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
-      <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
-      <Association Name="KHOAHOC_KYTHI" Member="KYTHIs" ThisKey="MaK" OtherKey="MaK" Type="KYTHI" />
-      <Association Name="KHOAHOC_LOPHOC" Member="LOPHOCs" ThisKey="MaK" OtherKey="MaK" Type="LOPHOC" />
     </Type>
   </Table>
   <Table Name="dbo.KYTHI" Member="KYTHIs">
@@ -154,6 +172,28 @@
       <Association Name="KHOAHOC_KYTHI" Member="KHOAHOC" ThisKey="MaK" OtherKey="MaK" Type="KHOAHOC" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.KHOAHOC" Member="KHOAHOCs">
+    <Type Name="KHOAHOC">
+      <Column Name="MaK" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TenKhoaHoc" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="NamHoc" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="NgayBatDau" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="NgayKetThuc" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Association Name="KHOAHOC_KYTHI" Member="KYTHIs" ThisKey="MaK" OtherKey="MaK" Type="KYTHI" />
+      <Association Name="KHOAHOC_LOPHOC" Member="LOPHOCs" ThisKey="MaK" OtherKey="MaK" Type="LOPHOC" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LICHNGAY" Member="LICHNGAYs">
+    <Type Name="LICHNGAY">
+      <Column Name="MaLN" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TenLich" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Thu1" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="Thu2" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="Thu3" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Association Name="LICHNGAY_LOPHOC" Member="LOPHOCs" ThisKey="MaLN" OtherKey="MaLN" Type="LOPHOC" />
+    </Type>
+  </Table>
   <Table Name="dbo.LICHTHI" Member="LICHTHIs">
     <Type Name="LICHTHI">
       <Column Name="MaLT" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -163,6 +203,8 @@
       <Column Name="NgayThi" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
       <Column Name="GioBatDau" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
       <Column Name="GioKetThuc" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
+      <Column Name="XemDapAn" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="SLThamGia" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Association Name="LICHTHI_KETQUATHI" Member="KETQUATHIs" ThisKey="MaLT" OtherKey="MaLT" Type="KETQUATHI" />
       <Association Name="DETHI_LICHTHI" Member="DETHI" ThisKey="MaD" OtherKey="MaD" Type="DETHI" IsForeignKey="true" />
@@ -175,13 +217,18 @@
       <Column Name="MaL" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="MaK" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="MaM" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MaC" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MaLN" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="TenLop" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Column Name="MaGV" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SiSoMax" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="SiSo" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Association Name="LOPHOC_HOCVIEN_LOPHOC" Member="HOCVIEN_LOPHOCs" ThisKey="MaL" OtherKey="MaL" Type="HOCVIEN_LOPHOC" />
       <Association Name="LOPHOC_LICHTHI" Member="LICHTHIs" ThisKey="MaL" OtherKey="MaL" Type="LICHTHI" />
+      <Association Name="CAHOC_LOPHOC" Member="CAHOC" ThisKey="MaC" OtherKey="MaC" Type="CAHOC" IsForeignKey="true" />
       <Association Name="GIAOVIEN_LOPHOC" Member="GIAOVIEN" ThisKey="MaGV" OtherKey="MaGV" Type="GIAOVIEN" IsForeignKey="true" />
       <Association Name="KHOAHOC_LOPHOC" Member="KHOAHOC" ThisKey="MaK" OtherKey="MaK" Type="KHOAHOC" IsForeignKey="true" />
+      <Association Name="LICHNGAY_LOPHOC" Member="LICHNGAY" ThisKey="MaLN" OtherKey="MaLN" Type="LICHNGAY" IsForeignKey="true" />
       <Association Name="MON_LOPHOC" Member="MON" ThisKey="MaM" OtherKey="MaM" Type="MON" IsForeignKey="true" />
     </Type>
   </Table>
@@ -209,6 +256,7 @@
       <Column Name="DapAnD" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Column Name="DapAnDung" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Column Name="GiaiThich" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="LuotDung" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Association Name="NGANHANGCAUHOI_BAILAM" Member="BAILAMs" ThisKey="MaCH" OtherKey="MaCH" Type="BAILAM" />
       <Association Name="NGANHANGCAUHOI_DAPAN" Member="DAPANs" ThisKey="MaCH" OtherKey="MaCH" Type="DAPAN" />

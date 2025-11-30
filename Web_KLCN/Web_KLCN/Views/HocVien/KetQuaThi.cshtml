@@ -1,47 +1,96 @@
-﻿@{
-    Layout = "~/Views/Shared/LayoutPage2.cshtml";
+﻿@model Web_KLCN.Models.KetQuaThiVM
+@{
     ViewBag.Title = "Kết quả thi";
+    Layout = "~/Views/Shared/LayoutPage.cshtml";
 }
 
-<div class="container text-center py-5">
-    <h2 class="fw-bold text-success mb-3">Nộp bài thành công!</h2>
-    <p class="fs-5">Bạn đã làm đúng <strong>@ViewBag.SoCauDung</strong> / @ViewBag.TongCau câu.</p>
-    <p class="fs-4 text-primary">Điểm: <strong>@ViewBag.Diem</strong></p>
+<div class="container py-5">
+    <div class="text-center">
+        <!-- Icon thành công -->
+        <div class="mb-4">
+            <i class="fas fa-check-circle fa-5x text-success"></i>
+        </div>
 
-    <div class="mt-4">
-        <a href="@Url.Action("DiemThi","HocVien")" class="btn btn-lg text-white px-5" style="background:#1800AC;">
-            Xem bảng điểm
-        </a>
+        <h2 class="fw-bold text-success mb-3">Nộp bài thành công!</h2>
+        <p class="text-muted mb-4">Cảm ơn bạn đã hoàn thành bài thi.</p>
+
+        <!-- Card kết quả đẹp -->
+        <div class="card mx-auto shadow-lg" style="max-width: 500px; border-radius: 20px; overflow:hidden;">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h4 class="mb-0">@Model.TenDe</h4>
+                <small>@Model.MonHoc</small>
+            </div>
+            <div class="card-body text-center py-4">
+                <!-- Thời gian làm bài -->
+                <p class="mb-3">
+                    <i class="fas fa-clock text-primary me-2"></i>
+                    <strong>Thời gian làm bài:</strong><br />
+                    <span class="fs-4 text-primary">
+                        @(Model.ThoiGianLamBai.HasValue
+                            ? Model.ThoiGianLamBai.Value.ToString(@"hh\:mm\:ss")
+                            : "--:--:--")
+                    </span>
+                </p>
+
+                <!-- Số câu đúng -->
+                <p class="mb-3">
+                    <i class="fas fa-check text-success me-2"></i>
+                    <strong>Số câu đúng:</strong><br />
+                    <span class="fs-3 fw-bold text-success">
+                        @Model.SoCauDung / @Model.TongCau
+                    </span>
+                </p>
+
+                <!-- Điểm số -->
+                <p class="mb-4">
+                    <i class="fas fa-trophy text-warning me-2"></i>
+                    <strong>Điểm số:</strong><br />
+                    <span class="fs-1 fw-bold text-warning">
+                        @Model.Diem
+                    </span>
+                    <small class="text-muted">/ 10</small>
+                </p>
+            </div>
+        </div>
+
+        <!-- Nút xem lại -->
+        <div class="mt-5">
+            <a href="@Url.Action("XemLaiBaiLam", "HocVien", new { id = Model.MaKQ })"
+               class="btn btn-lg btn-primary px-5 py-3 shadow">
+                <i class="fas fa-eye me-2"></i>Xem lại bài làm chi tiết
+            </a>
+            <br /><br />
+            <a href="@Url.Action("LichThi", "HocVien")" class="btn btn-outline-secondary">
+                Quay lại lịch thi
+            </a>
+        </div>
     </div>
 </div>
 
-@*<div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-8 col-sm-10">
-                <div class="card shadow-lg border-0 text-center">
-                    <div class="card-body py-5">
-                        <div class="mb-4">
-                            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
-                        </div>
-                        <h2 class="fw-bold text-success mb-3">Nộp bài thành công!</h2>
-                        <p class="fs-5">Bạn đã làm đúng <strong>@ViewBag.SoCauDung</strong> câu trên tổng số <strong>@ViewBag.TongCau</strong> câu.</p>
-                        <p class="fs-3 fw-semibold text-primary mb-4">Điểm: <strong>@ViewBag.Diem</strong></p>
-
-                        <a href="@Url.Action("DiemThi","HocVien")" class="btn btn-lg text-white px-5" style="background:#1800AC; border-radius:50px;">
-                            Xem bảng điểm
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>*@
-
 <style>
-    .card {
-        border-radius: 15px;
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
     }
 
-    .btn:hover {
-        background-color: #0f008a !important;
+    .card {
+        transition: transform 0.3s;
     }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+    .btn-primary {
+        background: #1800AC;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background: #0f0080 !important;
+        }
 </style>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+}

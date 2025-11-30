@@ -1,14 +1,10 @@
-﻿@{
+﻿<!--@{
     ViewBag.Title = "Đăng nhập học viên";
-    ViewBag.HideNavbar = true; // Ẩn header + footer
-    Layout = "~/Views/Shared/LayoutPage2.cshtml";
-}
-
+}-->
 <!-- Favicon -->
-<link rel="icon" type="image/png" href="~/hinhanh/logo.png">
-
+<!--<link rel="icon" type="image/png" href="~/hinhanh/logo.png">-->
 <!-- Bootstrap + Font Awesome -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 <style>
@@ -25,19 +21,19 @@
     .login-card {
         background: #fff;
         border-radius: 20px;
-        padding: 20px 25px; /* giữ nguyên như trước */
+        padding: 20px 25px;
         width: 100%;
-        max-width: 380px; /* giữ như trước */
-        box-shadow: 0 10px 15px rgba(0,0,0,0.15); /* shadow mặc định đẹp */
+        max-width: 380px;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.15);
         display: flex;
         flex-direction: column;
         justify-content: center;
-        transition: all 0.3s ease; /* hover mượt */
+        transition: all 0.3s ease;
     }
 
         .login-card:hover {
-            transform: translateY(-3px); /* nâng card */
-            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25); /* shadow đậm hơn giống register */
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25);
         }
 
     .login-logo {
@@ -95,10 +91,9 @@
 
 <div class="login-card">
     <img src="~/hinhanh/logo.png" alt="Logo" class="login-logo">
-    <h3 class="login-title">Đăng nhập học viên</h3>
-
-    <!-- ✅ Form đăng nhập -->
-    <form method="post" action="@Url.Action("Login", "Home")">
+    <h3 class="login-title">Đăng nhập học viên</h3>-->
+<!-- Form đăng nhập -->
+<!--<form method="post" action="@Url.Action("Login", "Home")">
         <div class="mb-3">
             <label class="form-label fw-semibold">Tên đăng nhập</label>
             <div class="input-group">
@@ -122,12 +117,12 @@
             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
         </button>
 
-        @*<div class="text-center">
+        <div class="text-center">
             <small class="text-muted">
                 <i class="fas fa-info-circle me-1"></i>
                 Liên hệ admin nếu quên mật khẩu
             </small>
-        </div>*@
+        </div>
 
         <div class="text-center mt-3">
             <small>
@@ -153,4 +148,203 @@
             icon.classList.replace('fa-eye-slash', 'fa-eye');
         }
     }
+</script>-->
+
+
+@{
+    ViewBag.Title = "Đăng nhập học viên";
+}
+
+<link rel="icon" type="image/png" href="~/hinhanh/logo.png">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<style>
+    /* ------------------- CUSTOM STYLES ------------------- */
+    html, body {
+        height: 100%;
+        margin: 0;
+        background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: relative; /* Thêm relative cho body để định vị toast */
+    }
+
+    .login-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 20px 25px;
+        width: 100%;
+        max-width: 380px;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+        .login-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25);
+        }
+
+    .login-logo {
+        height: 80px;
+        display: block;
+        margin: 0 auto 15px;
+    }
+
+    .login-title {
+        font-weight: 700;
+        color: #1800AC;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 8px 12px;
+    }
+
+    .btn-login {
+        width: 100%;
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 8px 0;
+        background-color: #1800AC;
+        border-color: #1800AC;
+    }
+
+        .btn-login:hover,
+        .btn-login:focus {
+            background-color: #140090;
+            border-color: #140090;
+        }
+
+    .text-muted small {
+        font-size: 0.85rem;
+    }
+
+    .text-center small a {
+        color: #1800AC;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    /* ------------------- TOAST CONTAINER STYLE ------------------- */
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1080; /* Cao hơn navbar/modal */
+    }
+    /* Đảm bảo input-group-text có border đồng nhất */
+    .input-group-text {
+        border-radius: 10px 0 0 10px !important;
+        background-color: #e9ecef;
+        border-color: #ced4da;
+    }
+
+    .input-group .form-control {
+        border-radius: 0 10px 10px 0 !important;
+    }
+
+    .input-group-text:last-child {
+        border-radius: 0 10px 10px 0 !important;
+        border-left: none !important;
+    }
+</style>
+
+<div class="toast-container">
+    @if (ViewBag.Error != null)
+    {
+        <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
+            <div class="d-flex">
+                <div class="toast-body fw-semibold">
+                    <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.Error
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="login-card">
+    <img src="~/hinhanh/logo.png" alt="Logo" class="login-logo">
+    <h3 class="login-title">Đăng nhập học viên</h3>
+
+    <form method="post" action="@Url.Action("Login", "Home")">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Tên đăng nhập</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" name="taiKhoan" class="form-control" placeholder="Nhập tên đăng nhập" required autofocus>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-semibold">Mật khẩu</label>
+            <div class="input-group position-relative">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" name="matKhau" class="form-control" id="matKhauInput" placeholder="Nhập mật khẩu" required>
+                <span class="input-group-text bg-white border-start-0" onclick="togglePassword()" style="cursor:pointer;">
+                    <i class="fas fa-eye" id="toggleIcon"></i>
+                </span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-login mb-3">
+            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+        </button>
+
+        <div class="text-center">
+            <small class="text-muted">
+                <i class="fas fa-info-circle me-1"></i>
+                Liên hệ admin nếu quên mật khẩu
+            </small>
+        </div>
+
+        <div class="text-center mt-3">
+            <small>
+                Bạn chưa có tài khoản?
+                <a href="@Url.Action("Register", "Home")" style="color:#1800AC; font-weight:600; text-decoration:none;">
+                    Đăng ký ngay
+                </a>
+            </small>
+        </div>
+
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function togglePassword() {
+        const input = document.getElementById('matKhauInput');
+        const icon = document.getElementById('toggleIcon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    // LOGIC HIỂN THỊ VÀ TỰ ĐỘNG ẨN TOAST SAU 3 GIÂY
+    document.addEventListener('DOMContentLoaded', function () {
+        const errorToastEl = document.getElementById('errorToast');
+        if (errorToastEl) {
+            // Khởi tạo Toast của Bootstrap
+            const toast = new bootstrap.Toast(errorToastEl, {
+                autohide: true, // Tự động ẩn
+                delay: 3000   // Ẩn sau 3000ms (3 giây)
+            });
+            // Hiển thị Toast
+            toast.show();
+        }
+    });
 </script>

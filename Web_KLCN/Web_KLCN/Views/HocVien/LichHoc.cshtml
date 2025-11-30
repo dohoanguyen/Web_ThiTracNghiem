@@ -1,0 +1,819 @@
+﻿@*@using System.Globalization
+
+@{
+    ViewBag.Title = "Lịch học - TUQ Education";
+    Layout = "~/Views/Shared/LayoutPage.cshtml";
+
+    // Khởi tạo ngày hiện tại
+    DateTime today = DateTime.Now.Date;
+
+    // Tính ngày Thứ Hai của tuần hiện tại
+    int dayOfWeek = (int)today.DayOfWeek;
+    int daysToMonday = (dayOfWeek == 0 ? 6 : dayOfWeek - 1);
+    DateTime initialMonday = today.AddDays(-daysToMonday);
+}
+
+<style>
+    /* ---------------------------------------------------------------- */
+    /* I. CSS MÀU SẮC LỊCH HỌC (CHỈ GIỮ LẠI LỚP TRÊN LỚP) */
+    /* ---------------------------------------------------------------- */
+
+    /* Lịch học trên lớp (Màu xám) */
+    .schedule-on-class {
+        background-color: #f3f4f6; /* gray-100 */
+        border-color: #6b7280; /* gray-500 */
+        color: #1f2937; /* dark text */
+    }
+
+    #date-picker-input {
+        padding-right: 2.5rem;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* II. CSS ÁP DỤNG KHI IN ẤN */
+    /* ---------------------------------------------------------------- */
+    @@media print {
+
+        .header-main,
+        .footer-main,
+        .sidebar-main {
+            display: none !important;
+        }
+
+        #schedule-controls,
+        #calendar-icon,
+        #date-picker-input,
+        .action-buttons,
+        button,
+        .btn {
+            display: none !important;
+        }
+
+        .no-print,
+        [data-print="no"] {
+            display: none !important;
+        }
+
+        #print-container {
+            padding: 0 !important;
+            margin: 0 auto !important;
+            max-width: 100% !important;
+        }
+
+        #weekly-schedule-table {
+            display: block !important;
+            width: 100% !important;
+            overflow: visible !important;
+        }
+
+        table {
+            border-collapse: collapse !important;
+            width: 100% !important;
+            min-width: unset !important;
+        }
+
+            table th, table td {
+                border: 1px solid #000 !important;
+                padding: 6px !important;
+                font-size: 9pt;
+            }
+
+        .schedule-on-class {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+</style>
+
+<div id="print-container" class="container mx-auto px-4 py-8 md:py-12">
+    <div class="flex flex-col gap-6">*@
+@* ========================================================= *@
+@* I. PHẦN ĐIỀU KHIỂN & CHỌN NGÀY *@
+@* ========================================================= *@
+<!--<section id="schedule-controls" class="no-print">
+    <div class="flex flex-wrap items-center gap-4">
+        <h1 class="text-2xl font-bold tracking-tight text-primary mr-6">Lịch học theo tuần</h1>
+
+        <div class="relative ml-4">
+            <input id="date-picker-input"
+                   class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md py-1.5 px-3 text-sm w-40 focus:ring-primary focus:border-primary cursor-pointer"
+                   type="text"-->
+                   @*value="@today.ToString("dd/MM/yyyy")" />*@
+
+            <!--<span id="calendar-icon"
+                  class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer">
+                calendar_today
+            </span>
+        </div>
+
+        <button id="btn-current-week" class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-md transition-colors bg-primary text-white hover:bg-primary/90">
+            <span class="material-symbols-outlined text-base">event_repeat</span>
+            Hiện tại
+        </button>
+
+        <button class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-md transition-colors bg-primary text-white hover:bg-primary/90" onclick="window.print()">
+            <span class="material-symbols-outlined text-base">print</span>
+            In lịch
+        </button>
+
+        <div class="flex items-center gap-2 ml-auto">
+            <button id="btn-prev-week" class="flex items-center gap-1 text-sm px-3 py-1.5 rounded-md transition-colors bg-primary text-white hover:bg-primary/90">
+                <span class="material-symbols-outlined text-base">chevron_left</span>
+                Trở về
+            </button>
+
+            <button id="btn-next-week" class="flex items-center gap-1 text-sm px-3 py-1.5 rounded-md transition-colors bg-primary text-white hover:bg-primary/90">
+                Tiếp
+                <span class="material-symbols-outlined text-base">chevron_right</span>
+            </button>
+        </div>
+    </div>
+</section>-->
+@* ========================================================= *@
+@* II. BẢNG LỊCH HỌC *@
+@* ========================================================= *@
+<!--<section id="weekly-schedule-table">
+    <div class="overflow-x-auto">
+        <div class="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900/50">
+            <table id="schedule-table" class="w-full min-w-[1000px] border-collapse">
+                <thead>
+                    <tr class="bg-primary/10 dark:bg-primary/20">
+                        <th class="w-24 border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Ca học</th>
+                        <th id="day_2" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 2<br /><span class="date-display"></span></th>
+                        <th id="day_3" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 3<br /><span class="date-display"></span></th>
+                        <th id="day_4" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 4<br /><span class="date-display"></span></th>
+                        <th id="day_5" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 5<br /><span class="date-display"></span></th>
+                        <th id="day_6" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 6<br /><span class="date-display"></span></th>
+                        <th id="day_7" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 7<br /><span class="date-display"></span></th>
+                        <th id="day_8" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Chủ nhật<br /><span class="date-display"></span></th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body">-->
+@* Nội dung lịch sẽ được tạo hoàn toàn bằng JavaScript và AJAX *@
+<!--</tbody>
+            </table>
+        </div>
+    </div>
+</section>-->
+@* ========================================================= *@
+@* III. CHÚ THÍCH (CHỈ GIỮ LẠI LỚP TRÊN LỚP) *@
+@* ========================================================= *@
+<!--<section id="schedule-legend">
+    <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-700 dark:text-gray-300">
+        <div class="flex items-center gap-2">
+            <div class="w-4 h-4 schedule-on-class border border-gray-500/50 rounded-sm"></div>
+            <span>Lịch học trên lớp</span>
+        </div>-->
+@* Đã bỏ Lịch học trực tuyến và Lịch tạm ngưng *@
+<!--</div>
+        </section>
+    </div>
+</div>-->
+@* ========================================================= *@
+@* IV. MÃ JAVASCRIPT *@
+@* ========================================================= *@
+<!--<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const dateInput = document.getElementById('date-picker-input');
+        const scheduleBody = document.getElementById('schedule-body');-->
+        @*const todayFromRazor = new Date('@today.ToString("yyyy-MM-dd")');*@
+        @*let currentMonday = new Date('@initialMonday.ToString("yyyy-MM-dd")');*@
+
+        <!--let fp = null;
+
+        // --- 1. HÀM TIỆN ÍCH ---
+
+        function getMonday(d) {
+            d = new Date(d);
+            d.setHours(0, 0, 0, 0);
+            let day = d.getDay(); // 0=CN, 1=T2, ..., 6=T7
+            let daysToSubtract = day === 0 ? 6 : day - 1;
+            d.setDate(d.getDate() - daysToSubtract);
+            return d;
+        }
+
+        function formatDateForServer(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDateDisplay(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            return `${day}/${month}`;
+        }
+
+        // --- 2. HÀM RENDER LỊCH HỌC ---
+        function renderSchedule(mondayDate, classData) {
+
+            // Xóa nội dung cũ và tạo cấu trúc 3 ca học (Sáng/Chiều/Tối)
+            scheduleBody.innerHTML = `
+                <tr>
+                    <td class="h-48 border border-gray-300 dark:border-gray-700 p-2 text-center align-middle font-semibold bg-gray-100 dark:bg-gray-800/30">Sáng</td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-S-2"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-S-3"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-S-4"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-S-5"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-S-6"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-S-7"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-S-8"></td>
+                </tr>
+                <tr>
+                    <td class="h-48 border border-gray-300 dark:border-gray-700 p-2 text-center align-middle font-semibold bg-gray-100 dark:bg-gray-800/30">Chiều</td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-C-2"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-C-3"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-C-4"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-C-5"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-C-6"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-C-7"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-C-8"></td>
+                </tr>
+                <tr>
+                    <td class="h-48 border border-gray-300 dark:border-gray-700 p-2 text-center align-middle font-semibold bg-gray-100 dark:bg-gray-800/30">Tối</td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-T-2"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-T-3"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-T-4"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-T-5"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-T-6"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-T-7"></td>
+                    <td class="border border-gray-300 dark:border-gray-700 p-1 align-top" id="cell-T-8"></td>
+                </tr>
+            `;
+
+            if (!classData || classData.length === 0) {
+                scheduleBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-8 text-lg text-gray-500 dark:text-gray-400">
+                            Không có lịch học nào trong tuần này.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            function getSessionCode(maCa) {
+                if (maCa === 1 || maCa === 2) return 'S';
+                if (maCa === 3 || maCa === 4) return 'C';
+                if (maCa === 5) return 'T';
+                return null;
+            }
+
+            // Lặp qua dữ liệu lớp học
+            classData.forEach(function (item) {
+                const sessionCode = getSessionCode(item.MaCa);
+
+                if (!sessionCode) return;
+
+                // Tạo nội dung chi tiết của một ô lịch - CHỈ SỬ DỤNG schedule-on-class
+                const scheduleContent = `
+                    <div class="schedule-on-class p-2 rounded text-xs h-full border-l-4 mb-1">
+                        <p class="font-bold">${item.TenMon}</p>
+                        <p>${item.TenLop}</p>
+                        <p>Thời gian: ${item.GioBatDau} - ${item.GioKetThuc}</p>
+                        <p>GV: ${item.TenGV}</p>-->
+@* Đã bỏ chú thích "Học trực tuyến" *@
+<!--</div>
+                `;
+
+                // Lấy các ngày trong tuần mà lớp học diễn ra
+                const scheduleDays = [item.Thu1, item.Thu2, item.Thu3].filter(day => day > 0);
+
+                scheduleDays.forEach(function (day) {
+                    // Chuyển Thứ 2 -> 2, ..., CN (1) -> 8
+                    const dayIndex = day === 1 ? 8 : day;
+                    const cellId = `cell-${sessionCode}-${dayIndex}`;
+                    const targetCell = document.getElementById(cellId);
+
+                    if (targetCell) {
+                        targetCell.insertAdjacentHTML('beforeend', scheduleContent);
+                    }
+                });
+            });
+        }
+
+        // --- 3. HÀM CẬP NHẬT LỊCH HỌC TRÊN GIAO DIỆN (AJAX) ---
+        function updateSchedule(mondayDate) {
+            currentMonday = mondayDate;
+            const mondayFormatted = formatDateForServer(mondayDate); // YYYY-MM-DD cho Server
+
+            // Cập nhật tiêu đề bảng (Thứ 2 -> CN)
+            for (let i = 2; i <= 8; i++) {
+                const targetElement = document.getElementById(`day_${i}`);
+                if (targetElement) {
+                    const dateToShow = new Date(mondayDate);
+                    dateToShow.setDate(mondayDate.getDate() + (i - 2));
+
+                    const dateSpan = targetElement.querySelector('.date-display');
+                    if (dateSpan) {
+                        dateSpan.textContent = formatDateDisplay(dateToShow);
+
+                        if (dateToShow.getTime() === todayFromRazor.getTime()) {
+                            targetElement.classList.add('bg-primary/20', 'font-extrabold');
+                        } else {
+                            targetElement.classList.remove('bg-primary/20', 'font-extrabold');
+                        }
+                    }
+                }
+            }
+
+            // Tải dữ liệu lịch học
+            $.ajax({
+                url: '@Url.Action("LichHoc", "HocVien")',
+                type: 'GET',
+                data: { mondayDateStr: mondayFormatted },
+                beforeSend: function() {
+                    scheduleBody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-gray-500"><div class="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-primary rounded-full" role="status"></div> Đang tải lịch...</td></tr>`;
+                },
+                success: function (response) {
+                    if (response.success === false) {
+                        console.error("Lỗi tải lịch:", response.message);
+                        scheduleBody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-red-500">Lỗi tải dữ liệu: ${response.message}</td></tr>`;
+                    } else {
+                        renderSchedule(mondayDate, response);
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Lỗi kết nối:", xhr.responseText);
+                    scheduleBody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-red-500">Không thể kết nối đến máy chủ. Vui lòng thử lại.</td></tr>`;
+                }
+            });
+        }
+
+        // --- 4. KHỞI TẠO FLATPCIKR VÀ LOGIC ĐIỀU HƯỚNG NÚT BẤM ---
+
+        // Khởi tạo Flatpickr
+        if (typeof flatpickr !== 'undefined') {
+            fp = flatpickr(dateInput, {
+                dateFormat: "d/m/Y",
+                locale: "vn",
+                onChange: function (selectedDates, dateStr, instance) {
+                    if (selectedDates.length > 0) {
+                        const selectedDate = selectedDates[0];
+                        const newMonday = getMonday(selectedDate);
+                        updateSchedule(newMonday);
+                        instance.setDate(newMonday, false, "d/m/Y");
+                    }
+                },
+            });
+        }
+
+        function changeWeek(offset) {
+            const newMonday = new Date(currentMonday);
+            newMonday.setDate(currentMonday.getDate() + offset);
+            updateSchedule(newMonday);
+
+            if (fp) {
+                fp.setDate(newMonday, false, "d/m/Y");
+            }
+        }
+
+        document.getElementById('btn-prev-week').addEventListener('click', function () {
+            changeWeek(-7);
+        });
+
+        document.getElementById('btn-next-week').addEventListener('click', function () {
+            changeWeek(7);
+        });
+
+        document.getElementById('btn-current-week').addEventListener('click', function () {
+            const today = new Date();
+            const initialMonday = getMonday(today);
+
+            updateSchedule(initialMonday);
+
+            if (fp) {
+                fp.setDate(initialMonday, false, "d/m/Y");
+            }
+        });
+
+        document.getElementById('calendar-icon').addEventListener('click', function () {
+            if (fp) {
+                fp.open();
+            }
+        });
+
+        // --- 5. TẢI LỊCH KHI KHỞI TẠO ---
+        updateSchedule(currentMonday);
+    });
+</script>-->
+
+
+@using System.Globalization
+
+@{
+    ViewBag.Title = "Lịch học - TUQ Education";
+    Layout = "~/Views/Shared/LayoutPage.cshtml";
+
+    // Khởi tạo ngày hiện tại
+    DateTime today = DateTime.Now.Date;
+
+    // Tính ngày Thứ Hai của tuần hiện tại (dùng để khởi tạo lịch)
+    int dayOfWeek = (int)today.DayOfWeek;
+    // Tính ngày Thứ Hai (T2=1, CN=0, nên CN (0) lùi 6 ngày)
+    int daysToMonday = (dayOfWeek == 0 ? 6 : dayOfWeek - 1);
+    DateTime initialMonday = today.AddDays(-daysToMonday);
+}
+
+<style>
+    /* ---------------------------------------------------------------- */
+    /* I. CSS MÀU SẮC LỊCH HỌC */
+    /* ---------------------------------------------------------------- */
+
+    /* Lịch học trên lớp (Yêu cầu: Màu xám) */
+    .schedule-on-class {
+        background-color: #f3f4f6; /* gray-100 */
+        border-color: #6b7280; /* gray-500 */
+        color: #1f2937; /* dark text */
+    }
+
+    /* Lịch học trực tuyến (Yêu cầu: Màu xanh dương) */
+    .schedule-online {
+        background-color: #dbeafe; /* blue-100 */
+        border-color: #3b82f6; /* primary */
+        color: #1e40af; /* dark blue text */
+    }
+
+    /* Lịch Tạm Ngưng (Thêm màu đỏ nhạt) */
+    .schedule-canceled {
+        background-color: #fee2e2; /* red-100 */
+        border-color: #ef4444; /* red-500 */
+        color: #991b1b; /* dark red text */
+    }
+
+    #date-picker-input {
+        padding-right: 2.5rem;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* II. CSS ÁP DỤNG KHI IN ẤN (@@media print) */
+    /* ---------------------------------------------------------------- */
+    @@media print {
+
+        .header-main,
+        .footer-main,
+        .sidebar-main {
+            display: none !important;
+        }
+
+        #schedule-controls,
+        #calendar-icon,
+        #date-picker-input,
+        .action-buttons,
+        button,
+        .btn {
+            display: none !important;
+        }
+
+        .no-print,
+        [data-print="no"] {
+            display: none !important;
+        }
+
+        #print-container {
+            padding: 0 !important;
+            margin: 0 auto !important;
+            max-width: 100% !important;
+        }
+
+        #weekly-schedule-table {
+            display: block !important;
+            width: 100% !important;
+            overflow: visible !important; /* Quan trọng để tránh thanh cuộn */
+        }
+
+        table {
+            border-collapse: collapse !important;
+            width: 100% !important;
+            min-width: unset !important; /* Hủy min-width để bảng co giãn khi in */
+        }
+
+            table th, table td {
+                border: 1px solid #000 !important;
+                padding: 6px !important;
+                font-size: 9pt; /* Giảm font chữ khi in */
+            }
+
+        .schedule-on-class,
+        .schedule-online,
+        .schedule-canceled {
+            -webkit-print-color-adjust: exact; /* Giữ màu khi in */
+            print-color-adjust: exact; /* Giữ màu khi in */
+        }
+    }
+</style>
+
+<div id="print-container" class="container mx-auto px-4 py-8 md:py-12">
+    <div class="flex flex-col gap-6">
+
+        @* ========================================================= *@
+        @* I. PHẦN ĐIỀU KHIỂN & CHỌN NGÀY (SẼ BỊ ẨN KHI IN) *@
+        @* ========================================================= *@
+        <section id="schedule-controls" class="no-print">
+            <div class="flex flex-wrap items-center gap-4">
+                <h1 class="text-2xl font-bold tracking-tight text-primary mr-6">Lịch học theo tuần</h1>
+
+                @* Input chọn ngày (Flatpickr sẽ được gắn vào đây) *@
+                <div class="relative ml-4">
+                    <input id="date-picker-input"
+                           class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md py-1.5 px-3 text-sm w-40 focus:ring-primary focus:border-primary cursor-pointer"
+                           type="text"
+                           value="@today.ToString("dd/MM/yyyy")" />
+
+                    <span id="calendar-icon"
+                          class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer">
+                        calendar_today
+                    </span>
+                </div>
+
+                @* Nút Hiện tại *@
+                <button id="btn-current-week" class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-md transition-colors bg-primary text-white hover:bg-primary/90">
+                    <span class="material-symbols-outlined text-base">event_repeat</span>
+                    Hiện tại
+                </button>
+
+                @* Nút In lịch *@
+                <button class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-md transition-colors bg-primary text-white hover:bg-primary/90" onclick="window.print()">
+                    <span class="material-symbols-outlined text-base">print</span>
+                    In lịch
+                </button>
+
+                <div class="flex items-center gap-2 ml-auto">
+                    @* Nút Trở về (Tuần trước) *@
+                    <button id="btn-prev-week" class="flex items-center gap-1 text-sm px-3 py-1.5 rounded-md transition-colors bg-primary text-white hover:bg-primary/90">
+                        <span class="material-symbols-outlined text-base">chevron_left</span>
+                        Trở về
+                    </button>
+
+                    @* Nút Tiếp theo (Tuần sau) *@
+                    <button id="btn-next-week" class="flex items-center gap-1 text-sm px-3 py-1.5 rounded-md transition-colors bg-primary text-white hover:bg-primary/90">
+                        Tiếp
+                        <span class="material-symbols-outlined text-base">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        @* ========================================================= *@
+        @* II. BẢNG LỊCH HỌC *@
+        @* ========================================================= *@
+        <section id="weekly-schedule-table">
+            <div class="overflow-x-auto">
+                <div class="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900/50">
+                    <table id="schedule-table" class="w-full min-w-[1000px] border-collapse">
+                        <thead>
+                            <tr class="bg-primary/10 dark:bg-primary/20">
+                                <th class="w-24 border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Ca học</th>
+                                @* Dùng ID để JS cập nhật ngày tháng *@
+                                <th id="day_2" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 2<br /><span class="date-display"></span></th>
+                                <th id="day_3" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 3<br /><span class="date-display"></span></th>
+                                <th id="day_4" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 4<br /><span class="date-display"></span></th>
+                                <th id="day_5" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 5<br /><span class="date-display"></span></th>
+                                <th id="day_6" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 6<br /><span class="date-display"></span></th>
+                                <th id="day_7" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Thứ 7<br /><span class="date-display"></span></th>
+                                <th id="day_8" class="border border-gray-300 dark:border-gray-700 p-2 text-center text-sm font-semibold text-primary">Chủ nhật<br /><span class="date-display"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-body">
+                            @* Dữ liệu mẫu sẽ được thay thế bằng AJAX *@
+                            <tr>
+                                <td class="h-48 border border-gray-300 dark:border-gray-700 p-2 text-center align-middle font-semibold bg-gray-100 dark:bg-gray-800/30">Sáng</td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top">
+                                    <div class="schedule-on-class p-2 rounded text-xs h-full border-l-4">
+                                        <p class="font-bold">Dữ liệu NoSQL</p>
+                                        <p>13DHTH06 - 010110198107</p>
+                                        <p>Tiết: 1 - 5</p>
+                                        <p>Phòng: A109 - Phòng máy tính</p>
+                                        <p>GV: Nguyễn Văn Lê</p>
+                                    </div>
+                                </td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top">
+                                    <div class="schedule-online p-2 rounded text-xs h-full border-l-4">
+                                        <p class="font-bold text-primary dark:text-blue-100">Internet of Things</p>
+                                        <p>13DHTH02 - 010110197506</p>
+                                        <p>Tiết: 4 - 6</p>
+                                        <p>Phòng: A302 - 140 Lê Trọng Tấn</p>
+                                        <p>GV: Nguyễn Thị Hồng Thảo</p>
+                                    </div>
+                                </td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                            </tr>
+                            <tr>
+                                <td class="h-48 border border-gray-300 dark:border-gray-700 p-2 text-center align-middle font-semibold bg-gray-100 dark:bg-gray-800/30">Chiều</td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top">
+                                    <div class="schedule-on-class p-2 rounded text-xs h-full border-l-4">
+                                        <p class="font-bold">Lập trình mã nguồn mở</p>
+                                        <p>13DHTH06 - 010110197807</p>
+                                        <p>Tiết: 7 - 11</p>
+                                        <p>Phòng: A205 - Phòng máy tính</p>
+                                        <p>GV: Huỳnh Khắc Duy</p>
+                                    </div>
+                                </td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top">
+                                    <div class="schedule-online p-2 rounded text-xs h-full border-l-4">
+                                        <p class="font-bold text-primary dark:text-blue-100">Thực hành Big data (Trực tuyến)</p>
+                                        <p>13DHTH03 - 010110197204</p>
+                                        <p>Tiết: 7 - 12</p>
+                                        <p>Phòng: Google Meet - Link online</p>
+                                        <p>GV: Ngô Dương Hà</p>
+                                    </div>
+                                </td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                            </tr>
+                            <tr>
+                                <td class="h-48 border border-gray-300 dark:border-gray-700 p-2 text-center align-middle font-semibold bg-gray-100 dark:bg-gray-800/30">Tối</td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top">
+                                    @* Lịch Tạm Ngưng Mẫu *@
+                                    <div class="schedule-canceled p-2 rounded text-xs h-full border-l-4">
+                                        <p class="font-bold text-red-800">Cấu trúc dữ liệu và giải thuật</p>
+                                        <p>13DHTH01 - 010110197001</p>
+                                        <p>Tiết: 13 - 15</p>
+                                        <p>Trạng thái: **Tạm ngưng**</p>
+                                    </div>
+                                </td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                                <td class="border border-gray-300 dark:border-gray-700 p-1 align-top"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        @* ========================================================= *@
+        @* III. CHÚ THÍCH (KHÔNG BỊ ẨN KHI IN) *@
+        @* ========================================================= *@
+        <section id="schedule-legend">
+            <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 schedule-on-class border border-gray-500/50 rounded-sm"></div>
+                    <span>Lịch học trên lớp</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 schedule-online border border-primary/50 rounded-sm"></div>
+                    <span>Lịch học trực tuyến</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 schedule-canceled border border-red-500/50 rounded-sm"></div>
+                    <span>Lịch tạm ngưng</span>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@* ========================================================= *@
+@* IV. MÃ JAVASCRIPT: LOGIC ĐIỀU HƯỚNG VÀ CẬP NHẬT NGÀY *@
+@* ========================================================= *@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const dateInput = document.getElementById('date-picker-input');
+
+        // Lấy ngày hiện tại (được nhúng từ Razor)
+        const todayFromRazor = new Date('@today.ToString("yyyy-MM-dd")');
+        // Biến lưu trữ ngày Thứ Hai của tuần đang hiển thị
+        let currentMonday = new Date('@initialMonday.ToString("yyyy-MM-dd")');
+
+        // Khai báo biến Flatpickr ở phạm vi này
+        let fp = null;
+
+        // --- 1. HÀM TIỆN ÍCH ---
+
+        // Tính ngày Thứ Hai của tuần chứa một ngày cụ thể (d)
+        function getMonday(d) {
+            d = new Date(d);
+            d.setHours(0, 0, 0, 0);
+            let day = d.getDay(); // 0=CN, 1=T2, ..., 6=T7
+            // Tính số ngày cần lùi về T2. CN (0) lùi 6 ngày. T2 (1) lùi 0 ngày.
+            let daysToSubtract = day === 0 ? 6 : day - 1;
+            d.setDate(d.getDate() - daysToSubtract);
+            return d;
+        }
+
+        // Định dạng ngày thành "dd/MM/yyyy"
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // --- 2. HÀM CẬP NHẬT LỊCH HỌC TRÊN GIAO DIỆN (AJAX sẽ được gọi ở đây) ---
+        function updateSchedule(mondayDate) {
+            currentMonday = mondayDate;
+            const mondayFormatted = formatDate(mondayDate);
+
+            // Cập nhật tiêu đề bảng (Thứ 2 -> CN)
+            for (let i = 2; i <= 8; i++) {
+                const targetElement = document.getElementById(`day_${i}`);
+                if (targetElement) {
+                    const dateToShow = new Date(mondayDate);
+                    // i-2 là số ngày cộng thêm (0-6)
+                    dateToShow.setDate(mondayDate.getDate() + (i - 2));
+
+                    const dateSpan = targetElement.querySelector('.date-display');
+                    if (dateSpan) {
+                        dateSpan.textContent = formatDate(dateToShow);
+                    }
+                }
+            }
+
+            // --- VỊ TRÍ GỌI AJAX ---
+            console.log(`Đang tải lịch học cho tuần bắt đầu từ Thứ Hai: ${mondayFormatted}`);
+        }
+
+        // --- 3. CẤU HÌNH & TÍCH HỢP FLATPCKR ---
+        if (typeof flatpickr !== 'undefined') {
+            fp = flatpickr(dateInput, {
+                dateFormat: "d/m/Y",
+                defaultDate: todayFromRazor,
+                weekNumbers: true,
+                locale: "vn", // Thay thế locale object bằng string nếu bạn đã nhúng vn.js
+                // Sử dụng hàm parseDate để Flatpickr hiểu đúng định dạng ban đầu
+                parseDate: (datestr, format) => {
+                    const parts = datestr.split('/');
+                    // Format d/m/Y -> parts[0]=day, parts[1]=month-1, parts[2]=year
+                    return new Date(parts[2], parts[1] - 1, parts[0]);
+                },
+                onChange: function (selectedDates, dateStr, instance) {
+                    if (selectedDates.length > 0) {
+                        const newMonday = getMonday(selectedDates[0]);
+
+                        // Chỉ cập nhật nếu ngày T2 thay đổi
+                        if (newMonday.getTime() !== currentMonday.getTime()) {
+                             updateSchedule(newMonday);
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- 4. LOGIC ĐIỀU HƯỚNG NÚT BẤM ---
+
+        // Hàm chung cho nút chuyển tuần
+        function changeWeek(offset) {
+            const newMonday = new Date(currentMonday);
+            newMonday.setDate(currentMonday.getDate() + offset);
+
+            // 1. Cập nhật lịch
+            updateSchedule(newMonday);
+
+            // 2. Đồng bộ input Flatpickr với ngày Thứ Hai mới
+            if (fp) {
+                // Đặt ngày T2 lên input và không kích hoạt onChange (false)
+                fp.setDate(newMonday, false, "d/m/Y");
+            }
+        }
+
+        // btn Trở về (Tuần trước)
+        document.getElementById('btn-prev-week').addEventListener('click', function () {
+            changeWeek(-7);
+        });
+
+        // btn Tiếp theo (Tuần sau)
+        document.getElementById('btn-next-week').addEventListener('click', function () {
+            changeWeek(7);
+        });
+
+        // btn Hiện tại
+        document.getElementById('btn-current-week').addEventListener('click', function () {
+            const today = new Date();
+            const initialMonday = getMonday(today);
+
+            // 1. Cập nhật lịch học theo tuần hiện tại (bắt đầu từ T2)
+            updateSchedule(initialMonday);
+
+            // 2. Đặt input ngày tháng hiển thị chính xác ngày hôm nay
+            if (fp) {
+                // Đặt ngày hiện tại (today) lên ô input và KHÔNG kích hoạt sự kiện onChange
+                fp.setDate(today, false, "d/m/Y");
+            }
+        });
+
+        // Khi icon được click -> mở lịch (Đã sửa lỗi, dùng biến fp)
+        document.getElementById('calendar-icon').addEventListener('click', function () {
+            if (fp) {
+                fp.open();
+            }
+        });
+
+        // --- 5. KHỞI TẠO ---
+        // Khởi tạo hiển thị lịch theo tuần hiện tại ngay khi load
+        updateSchedule(currentMonday);
+    });
+</script>

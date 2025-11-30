@@ -1,7 +1,160 @@
-﻿@{
+﻿@*@{
+        ViewBag.Title = "Đổi mật khẩu";
+    }
+
+    <link rel="icon" type="image/png" href="~/hinhanh/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px 35px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+
+            .login-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            }
+
+        .login-logo {
+            height: 90px;
+            display: block;
+            margin: 0 auto 15px;
+        }
+
+        .login-title {
+            font-weight: 700;
+            color: #1800AC;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+
+        .btn-login {
+            width: 100%;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 10px 0;
+            background-color: #1800AC;
+            border-color: #1800AC;
+        }
+
+            .btn-login:hover,
+            .btn-login:focus {
+                background-color: #1800AC;
+                border-color: #140090;
+            }
+
+        .text-muted small {
+            font-size: 0.9rem;
+        }
+
+        .alert-custom {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 300px;
+        }
+    </style>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger alert-custom">
+            <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.Error
+        </div>
+    }
+
+    @if (ViewBag.Success != null)
+    {
+        <div class="alert alert-success alert-custom">
+            <i class="fas fa-check-circle me-2"></i>@ViewBag.Success
+        </div>
+    }
+
+    <div class="login-card">
+        <img src="@Url.Content("~/hinhanh/logo.png")" alt="Logo" class="login-logo">
+        <h3 class="login-title">Đổi mật khẩu</h3>
+
+        <form method="post" action="@Url.Action("DoiMatKhau", "HocVien")">
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Mật khẩu cũ</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" name="matKhauCu" id="mkCu" class="form-control" placeholder="Nhập mật khẩu cũ" required>
+                    <span class="input-group-text bg-white border-start-0" onclick="togglePass('mkCu','icon1')" style="cursor:pointer;">
+                        <i class="fas fa-eye" id="icon1"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Mật khẩu mới</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                    <input type="password" name="matKhauMoi" id="mkMoi" class="form-control" placeholder="Ít nhất 8 ký tự" required>
+                    <span class="input-group-text bg-white border-start-0" onclick="togglePass('mkMoi','icon2')" style="cursor:pointer;">
+                        <i class="fas fa-eye" id="icon2"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Xác nhận mật khẩu mới</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-check"></i></span>
+                    <input type="password" name="xacNhanMK" id="mkXN" class="form-control" placeholder="Nhập lại mật khẩu mới" required>
+                    <span class="input-group-text bg-white border-start-0" onclick="togglePass('mkXN','icon3')" style="cursor:pointer;">
+                        <i class="fas fa-eye" id="icon3"></i>
+                    </span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-login">
+                <i class="fas fa-save me-2"></i>Lưu thay đổi
+            </button>
+        </form>
+    </div>
+
+    <script>
+        function togglePass(id, iconId) {
+            const input = document.getElementById(id);
+            const icon = document.getElementById(iconId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        }
+    </script>*@
+
+
+@{
     ViewBag.Title = "Đổi mật khẩu";
-    ViewBag.HideNavbar = true;
-    Layout = "~/Views/Shared/LayoutPage2.cshtml";
 }
 
 <link rel="icon" type="image/png" href="~/hinhanh/logo.png">
@@ -71,28 +224,23 @@
         font-size: 0.9rem;
     }
 
-    .alert-custom {
+    /* CSS cho Popup mới */
+    .alert-popup {
         position: fixed;
         top: 20px;
         right: 20px;
         z-index: 1050;
         min-width: 300px;
+        transition: all 0.5s ease-in-out;
+        transform: translateX(120%); /* Ẩn ban đầu */
     }
+
+        .alert-popup.show {
+            transform: translateX(0); /* Hiện ra */
+        }
 </style>
 
-@if (ViewBag.Error != null)
-{
-    <div class="alert alert-danger alert-custom">
-        <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.Error
-    </div>
-}
-
-@if (ViewBag.Success != null)
-{
-    <div class="alert alert-success alert-custom">
-        <i class="fas fa-check-circle me-2"></i>@ViewBag.Success
-    </div>
-}
+<div id="notification-container"></div>
 
 <div class="login-card">
     <img src="@Url.Content("~/hinhanh/logo.png")" alt="Logo" class="login-logo">
@@ -115,7 +263,8 @@
             <label class="form-label fw-semibold">Mật khẩu mới</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-key"></i></span>
-                <input type="password" name="matKhauMoi" id="mkMoi" class="form-control" placeholder="Ít nhất 5 ký tự" required>
+                @* Thêm pattern để ràng buộc ít nhất 8 ký tự *@
+                <input type="password" name="matKhauMoi" id="mkMoi" class="form-control" placeholder="Ít nhất 8 ký tự" required pattern=".{8,}" title="Mật khẩu phải có ít nhất 8 ký tự">
                 <span class="input-group-text bg-white border-start-0" onclick="togglePass('mkMoi','icon2')" style="cursor:pointer;">
                     <i class="fas fa-eye" id="icon2"></i>
                 </span>
@@ -139,7 +288,9 @@
     </form>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    // Hàm hiển thị/ẩn mật khẩu
     function togglePass(id, iconId) {
         const input = document.getElementById(id);
         const icon = document.getElementById(iconId);
@@ -152,4 +303,71 @@
             icon.classList.replace("fa-eye-slash", "fa-eye");
         }
     }
+
+    $(document).ready(function () {
+        // Lấy thông báo từ ViewBag
+        const errorMsg = '@Html.Raw(Json.Encode(ViewBag.Error))';
+        const successMsg = '@Html.Raw(Json.Encode(ViewBag.Success))';
+        const notificationContainer = $('#notification-container');
+
+        // Hàm tạo và hiển thị popup
+        function showPopup(type, message) {
+            // Đảm bảo message là chuỗi hợp lệ
+            if (!message || message === 'null') return;
+
+            let iconClass, alertClass;
+
+            if (type === 'Success') {
+                iconClass = 'fa-check-circle';
+                alertClass = 'alert-success';
+            } else {
+                iconClass = 'fa-exclamation-triangle';
+                alertClass = 'alert-danger';
+            }
+
+            const popupHtml = `
+                <div class="alert ${alertClass} alert-popup">
+                    <i class="fas ${iconClass} me-2"></i>${JSON.parse(message)}
+                </div>
+            `;
+
+            // Xóa popup cũ và thêm popup mới
+            notificationContainer.empty().append(popupHtml);
+            const popup = notificationContainer.find('.alert-popup');
+
+            // Hiển thị popup
+            setTimeout(() => {
+                popup.addClass('show');
+            }, 50);
+
+            // Tự động ẩn sau 3 giây
+            setTimeout(() => {
+                popup.removeClass('show');
+
+                // Xóa khỏi DOM sau khi ẩn
+                setTimeout(() => {
+                    popup.remove();
+                }, 500); // 500ms = thời gian transition CSS
+            }, 3000); // 3 giây
+        }
+
+        // -----------------------------------------------------------------
+        // Xử lý hiển thị thông báo và chuyển hướng
+        // -----------------------------------------------------------------
+
+        // 1. Nếu có thông báo lỗi, hiển thị popup lỗi
+        if (errorMsg && errorMsg !== 'null') {
+            showPopup('Error', errorMsg);
+        }
+
+        // 2. Nếu có thông báo thành công, hiển thị popup thành công VÀ chuyển hướng
+        if (successMsg && successMsg !== 'null') {
+            showPopup('Success', successMsg);
+
+            // Chuyển hướng về trang Đăng nhập sau 3 giây (3000ms)
+            setTimeout(() => {
+                window.location.href = '@Url.Action("Login", "Home")'; 
+            }, 3000);
+        }
+    });
 </script>

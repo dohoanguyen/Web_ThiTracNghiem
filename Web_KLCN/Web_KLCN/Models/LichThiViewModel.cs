@@ -7,6 +7,7 @@ namespace Web_KLCN.Models
     /// </summary>
     public class HocVienLichThiVM
     {
+        public int? MaKQ { get; set; }
         public int MaLT { get; set; }            // Mã lượt thi (LUOTTHI.MaLT)
         public string TenDe { get; set; }        // Tên đề thi (DETHI.TenDe)
         public string MonHoc { get; set; }       // Tên môn học (DETHI.MonHoc)
@@ -15,7 +16,8 @@ namespace Web_KLCN.Models
         public TimeSpan GioBatDau { get; set; }  // Giờ bắt đầu thi
         public TimeSpan GioKetThuc { get; set; } // Giờ kết thúc thi
 
-        public string TrangThai { get; set; }    // "Chưa mở", "Đang mở", "Đã thi"
+        public string TrangThai { get; set; }
+        public string TrangThaiLT { get; set; }// "Chưa mở", "Đang mở", "Đã thi"
 
         /// <summary>
         /// Helper hiển thị giờ dưới dạng chuỗi (ví dụ "08:30")

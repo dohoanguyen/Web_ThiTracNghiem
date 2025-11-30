@@ -1,161 +1,172 @@
 ﻿@model Web_KLCN.Models.HOCVIEN
 @{
     ViewBag.Title = "Thông tin cá nhân - TUQ";
-    Layout = "~/Views/Shared/LayoutPage2.cshtml";
+    Layout = "~/Views/Shared/LayoutPage.cshtml";
 }
 
-<!-- Styles -->
-<style>
-    body {
-        background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
-        min-height: 100vh;
-        font-family: 'Segoe UI', sans-serif;
-    }
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 min-h-screen font-display">
+    <div class="flex justify-center">
+        <div class="w-full lg:w-8/12">
+            <div class="bg-white dark:bg-background-dark/50 border border-black/10 dark:border-white/10 rounded-xl shadow-lg">
 
-    .profile-card {
-        background: #fff;
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        transition: 0.3s;
-    }
-
-        .profile-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-    .profile-header {
-        text-align: center;
-        margin-bottom: 25px;
-    }
-
-        .profile-header h3 {
-            color: #1800AC;
-            font-weight: 700;
-        }
-
-    .form-label {
-        font-weight: 600;
-    }
-
-    .btn-primary-custom {
-        background-color: #1800AC;
-        border-color: #1800AC;
-        color: #fff;
-        border-radius: 10px;
-        font-weight: 600;
-        padding: 10px 20px;
-    }
-
-        .btn-primary-custom:hover {
-            background: #150090;
-            color: #fff !important;
-        }
-
-    .btn-outline-secondary {
-        border-radius: 10px;
-        font-weight: 600;
-    }
-
-    .alert {
-        border-radius: 10px;
-    }
-</style>
-
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="profile-card">
-
-                <!-- Header -->
-                <div class="profile-header">
-                    <h3><i class="fa-solid fa-user-circle me-2"></i>Thông tin cá nhân</h3>
+                <div class="p-6 border-b border-black/10 dark:border-white/10">
+                    <h1 class="text-2xl font-bold text-primary dark:text-white flex items-center">
+                        <span class="material-symbols-outlined me-2 text-3xl">badge</span> Thông tin cá nhân
+                    </h1>
                 </div>
 
-                <!-- Thông báo -->
-                @if (TempData["Success"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show mb-3">
-                        <i class="fa-solid fa-circle-check me-2"></i>@TempData["Success"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
-                @if (TempData["Error"] != null)
-                {
-                    <div class="alert alert-danger alert-dismissible fade show mb-3">
-                        <i class="fa-solid fa-circle-exclamation me-2"></i>@TempData["Error"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
+                <div class="p-6">
+                    @* Khối hiển thị Popup thông báo đã được chuyển xuống phần JavaScript *@
 
-                <!-- Form -->
-                <form method="post" action="@Url.Action("ThongTinCaNhan", "HocVien")" enctype="multipart/form-data">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="MaHV" value="@Model.MaHV" />
+                    <form method="post" action="@Url.Action("ThongTinCaNhan", "HocVien")" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="MaHV" value="@Model.MaHV" />
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Họ và tên</label>
-                            <input type="text" name="TenHV" value="@Model.TenHV" class="form-control rounded-3" readonly />
+                        <div class="mb-6 pb-4 border-b border-black/5 dark:border-white/5 md:col-span-2">
+                            <label class="block text-sm font-medium text-[#645e8d] dark:text-white/60 mb-2">Ảnh đại diện</label>
+                            <div class="flex items-center space-x-4">
+                                @* Thêm class 'avatar-preview' để JS dễ dàng tìm thấy *@
+                                <img src="~/hinhanh/@(Model.AnhDaiDien ?? "user.png")"
+                                     alt="avatar" class="rounded-full shadow-md border-2 border-primary w-24 h-24 object-cover avatar-preview" />
+                                <input type="file" name="Anh"
+                                       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-background-dark/50 dark:border-white/20 dark:placeholder-gray-400
+                                              file:me-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold
+                                              file:bg-primary/10 file:text-primary dark:file:bg-primary/20 dark:file:text-white hover:file:bg-primary/20" />
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="Email" value="@Model.Email" class="form-control rounded-3" readonly />
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+                            <div>
+                                <label class="block text-sm font-medium text-[#645e8d] dark:text-white/60 mb-2">Họ và tên <span class="text-red-500">*</span></label>
+                                @* Đã xóa readonly và thêm required *@
+                                <input type="text" name="TenHV" value="@Model.TenHV" required
+                                       class="w-full rounded-md border-gray-300 shadow-sm dark:bg-background-dark/80 dark:border-white/20 focus:border-primary focus:ring-primary" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-[#645e8d] dark:text-white/60 mb-2">Email <span class="text-red-500">*</span></label>
+                                @* Đã xóa readonly và thêm required. Type email đã cung cấp validation cơ bản. *@
+                                <input type="email" name="Email" value="@Model.Email" required
+                                       class="w-full rounded-md border-gray-300 shadow-sm dark:bg-background-dark/80 dark:border-white/20 focus:border-primary focus:ring-primary" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-[#645e8d] dark:text-white/60 mb-2">Số điện thoại <span class="text-red-500">*</span></label>
+                                @* Thêm required và pattern cơ bản cho số điện thoại (chỉ chấp nhận 10 chữ số) *@
+                                <input type="text" name="SDT" value="@Model.SDT" required
+                                       pattern="^\+?\d{10}$"
+                                       title="Số điện thoại phải chứa đủ 10 chữ số."
+                                       class="w-full rounded-md border-gray-300 shadow-sm dark:bg-background-dark dark:border-white/20 focus:border-primary focus:ring-primary" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-[#645e8d] dark:text-white/60 mb-2">Giới tính <span class="text-red-500">*</span></label>
+                                <select name="GioiTinh" required
+                                        class="w-full rounded-md border-gray-300 shadow-sm dark:bg-background-dark dark:border-white/20 focus:border-primary focus:ring-primary">
+                                    <option value="Nam" @(Model.GioiTinh == "Nam" ? "selected" : "")>Nam</option>
+                                    <option value="Nữ" @(Model.GioiTinh == "Nữ" ? "selected" : "")>Nữ</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-[#645e8d] dark:text-white/60 mb-2">Ngày sinh</label>
+                                <input type="date" name="NgaySinh"
+                                       value="@(Model.NgaySinh.HasValue ? Model.NgaySinh.Value.ToString("yyyy-MM-dd") : "")"
+                                       class="w-full rounded-md border-gray-300 shadow-sm dark:bg-background-dark dark:border-white/20 focus:border-primary focus:ring-primary" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-[#645e8d] dark:text-white/60 mb-2">Địa chỉ</label>
+                                <input type="text" name="DiaChi" value="@Model.DiaChi"
+                                       class="w-full rounded-md border-gray-300 shadow-sm dark:bg-background-dark dark:border-white/20 focus:border-primary focus:ring-primary" />
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label">Số điện thoại</label>
-                            <input type="text" name="SDT" value="@Model.SDT" class="form-control rounded-3" />
+                        <div class="flex justify-center p-6 border-t border-black/10 dark:border-white/10 mt-6">
+                            <button type="submit" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6
+                                         bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors shadow-md">
+                                <span class="material-symbols-outlined align-middle text-lg me-2">save</span>
+                                <span class="truncate">Cập nhật thông tin</span>
+                            </button>
                         </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Giới tính</label>
-                            <select name="GioiTinh" class="form-select rounded-3">
-                                <option value="Nam" @(Model.GioiTinh == "Nam" ? "selected" : "")>Nam</option>
-                                <option value="Nữ" @(Model.GioiTinh == "Nữ" ? "selected" : "")>Nữ</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Ngày sinh</label>
-                            <input type="date" name="NgaySinh"
-                                   value="@(Model.NgaySinh.HasValue ? Model.NgaySinh.Value.ToString("yyyy-MM-dd") : "")"
-                                   class="form-control rounded-3" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Địa chỉ</label>
-                            <input type="text" name="DiaChi" value="@Model.DiaChi" class="form-control rounded-3" />
-                        </div>
-                    </div>
-
-                    <!-- Ảnh đại diện -->
-                    <div class="mt-4">
-                        <label class="form-label fw-semibold">Ảnh đại diện</label>
-                        <div class="d-flex align-items-center">
-                            <img src="~/hinhanh/@(Model.AnhDaiDien ?? "user.png")"
-                                 alt="avatar" class="rounded-circle me-3 shadow" width="80" height="80" />
-                            <input type="file" name="Anh" class="form-control rounded-3" style="max-width:300px;" />
-                        </div>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="text-center mt-5">
-                        <button type="submit" class="btn btn-primary-custom">
-                            <i class="fa-solid fa-save me-2"></i>Cập nhật thông tin
-                        </button>
-                        <a href="@Url.Action("Index", "HocVien")" class="btn btn-outline-secondary ms-2">
-                            <i class="fa-solid fa-arrow-left me-2"></i>Quay lại
-                        </a>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-}
+<div id="notification-popup" class="fixed bottom-4 right-4 z-50 transition-transform duration-300 transform translate-x-full">
+    @* Nội dung popup sẽ được JavaScript chèn vào và tự động ẩn *@
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.querySelector('input[name="Anh"]');
+        const avatarImg = document.querySelector('.avatar-preview');
+        const notificationContainer = document.getElementById('notification-popup');
+
+        // ----------------------------------------------------
+        // 1. CHỨC NĂNG LIVE PREVIEW ẢNH ĐẠI DIỆN
+        // ----------------------------------------------------
+        if (fileInput && avatarImg) {
+            fileInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarImg.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // ----------------------------------------------------
+        // 2. CHỨC NĂNG HIỂN THỊ POPUP VÀ TỰ ĐỘNG ẨN
+        // ----------------------------------------------------
+
+        function showNotification(type, message) {
+            let icon = type === 'Success' ? 'check_circle' : 'error';
+            let bgColor = type === 'Success' ? 'bg-green-100 dark:bg-gray-800' : 'bg-red-100 dark:bg-gray-800';
+            let textColor = type === 'Success' ? 'text-green-800 dark:text-green-400' : 'text-red-800 dark:text-red-400';
+            let borderColor = type === 'Success' ? 'border-green-300 dark:border-green-500' : 'border-red-300 dark:border-red-500';
+
+            const popupHTML = `
+                <div class="p-4 rounded-lg shadow-xl ${bgColor} ${textColor} flex items-center min-w-[300px] border ${borderColor}">
+                    <span class="material-symbols-outlined me-2 text-base">${icon}</span>
+                    <span class="text-sm">${message}</span>
+                </div>
+            `;
+
+            notificationContainer.innerHTML = '';
+            notificationContainer.innerHTML = popupHTML;
+
+            setTimeout(() => {
+                notificationContainer.classList.remove('translate-x-full');
+                notificationContainer.classList.add('translate-x-0');
+            }, 50);
+
+            setTimeout(() => {
+                notificationContainer.classList.remove('translate-x-0');
+                notificationContainer.classList.add('translate-x-full');
+
+                setTimeout(() => {
+                    notificationContainer.innerHTML = '';
+                }, 300);
+            }, 3000);
+        }
+
+        const successMessage = '@Html.Raw(Json.Encode(TempData["Success"]))';
+        const errorMessage = '@Html.Raw(Json.Encode(TempData["Error"]))';
+
+        if (successMessage && successMessage !== 'null' && successMessage !== '') {
+            showNotification('Success', JSON.parse(successMessage));
+        }
+        if (errorMessage && errorMessage !== 'null' && errorMessage !== '') {
+            showNotification('Error', JSON.parse(errorMessage));
+        }
+    });
+</script>

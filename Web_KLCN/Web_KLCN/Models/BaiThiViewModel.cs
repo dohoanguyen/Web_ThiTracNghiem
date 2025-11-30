@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Web_KLCN.Models
 {
@@ -7,6 +8,9 @@ namespace Web_KLCN.Models
     /// </summary>
     public class BaiThiViewModel
     {
+        public DateTime? ThoiGianBatDau { get; set; }
+
+        public int MaKQ {  get; set; }
         public int MaLT { get; set; }              
         public string TenDe { get; set; }       
         public string MonHoc { get; set; }          
@@ -14,7 +18,8 @@ namespace Web_KLCN.Models
         public int TongSoCau { get; set; }
 
         public int SoCauDung { get; set; }  
-        public double Diem { get; set; }
+        public decimal Diem { get; set; }
+        public bool XemDapAn { get; set; }
 
         public List<BaiThiCauHoiVM> CauHoiList { get; set; } = new List<BaiThiCauHoiVM>();
     }

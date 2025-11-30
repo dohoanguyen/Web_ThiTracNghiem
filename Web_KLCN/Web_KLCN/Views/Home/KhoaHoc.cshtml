@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "Khóa học - TUQ Education";
+    Layout = "~/Views/Shared/LayoutPage.cshtml";
+}
+
+
+<section class="relative py-20 md:py-28">
+    <!-- Background Image + Gradient Overlay -->
+    <div class="absolute inset-0">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCB-d4puwdQU7CNG8gVU3muvsTgOLNJMthN8kytz0fTNeaIB5Q-D6dZ8S-7U474fK2OGgffuvreyT9h2aQd2jr_9b3ZcpIqYrBTcufk9B3Jbe2LerGsrRvFo4lTXU48R6D09Rok87i0Lzzku7ZMjsFivaQNsl979wBUBlH2Ua8mvB1Vh9uiquW7Coymb4dEBWw0j53c35WWO3xXtEtJ-SeYj21pPfLfGl_hAWpfbla4J-AdGRvu-tndtEqiYGp8bhQkoet3KBgASn4"
+             alt="Hero background" class="w-full h-full object-cover opacity-10" />
+        <div class="absolute inset-0 bg-gradient-to-t from-background-light dark:from-background-dark to-transparent"></div>
+    </div>
+
+    <!-- Nội dung Hero -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center max-w-3xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-primary dark:text-white mb-4">
+                Khám Phá Các Khóa Học Của Chúng Tôi
+            </h1>
+            <p class="text-lg text-text-muted-light dark:text-text-muted-dark mb-8">
+                Tìm khóa học hoàn hảo để giúp bạn chuẩn bị cho kỳ thi THPT Quốc gia và đạt được mục tiêu học tập của mình.
+            </p>
+            <div class="relative max-w-xl mx-auto">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted-light dark:text-text-muted-dark">search</span>
+                <input class="w-full pl-12 pr-4 py-3 rounded-lg border-gray-200 dark:border-gray-700 bg-surface-light dark:bg-surface-dark focus:ring-primary focus:border-primary"
+                       placeholder="Tìm kiếm khóa học..." type="text" />
+            </div>
+        </div>
+
+        <!-- Grid khóa học -->
+        <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            @* Khóa học 1 *@
+            <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-lg overflow-hidden flex flex-col group">
+                <div class="relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv2FFIT89tduo1M55agiyGnnzmBbAlqPBk1SYLcRN3hOWxOGbZjj5Q2jjcVcR25sY5O6hOlp4Mrlupn97cT4unMuYc1Ak73g_vjv6uQ7h_Y3Bx8wYLEJ22oI7fJ5LOindRk236V0GNAWTJV4cT21XcWtrqXuCls5mn2LJTa8sPjEx_d64Gv3WSFCiuUbdvqfCsu7_NeqRM94VoP04ed8jIxnDcgT_DCLgY7hpyffYd22qYhXhj9HB-53lX6YOoT2QYH6-2gXOTxuM"
+                         alt="Khóa học Luyện thi Toán" class="w-full h-52 object-cover rounded-t-2xl" />
+                    <div class="absolute top-4 left-4 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold">Toán học</div>
+                </div>
+                <div class="p-6 flex-grow flex flex-col">
+                    <h3 class="text-xl font-bold mb-2 text-text-light dark:text-text-dark">Luyện thi Cấp tốc môn Toán</h3>
+                    <p class="text-text-muted-light dark:text-text-muted-dark mb-4 flex-grow">
+                        Tổng hợp kiến thức trọng tâm, luyện đề chuyên sâu và các phương pháp giải nhanh để đạt điểm cao trong kỳ thi THPT Quốc gia.
+                    </p>
+                    <div class="flex items-center text-text-muted-light dark:text-text-muted-dark text-sm mb-4">
+                        <span class="material-symbols-outlined text-base mr-2">schedule</span>
+                        <span>12 tuần</span>
+                        <span class="mx-3">|</span>
+                        <span class="material-symbols-outlined text-base mr-2">signal_cellular_alt</span>
+                        <span>Nâng cao</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <span class="text-2xl font-bold text-primary">2.500.000 VNĐ</span>
+                        <a href="#" class="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+
+            @* Khóa học 2 *@
+            <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-lg overflow-hidden flex flex-col group">
+                <div class="relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAILBGq7UD6Fk5GNZ1t97kPj4S7Y-Nm2VfO3AIQovKSn8L4wZhjJnYRrdxbrBecPnlKkWPF6gOCXicz97H1QY0uM6Ur3YFgaKxEOgSFax65M1aMcR38CZ9BqtlF1cujXUkAL6QLl4nLwYNhLXhvxH9F-66bu8jHzAYTECugJBqLgLoVyS0LsDEHsLyvOZ98dLs1dKbiLLabuVmuGgAfSZEI4_GJVvm2XmpOJlX6vSHsN_szOtSNtXrTgDHfPfKdlNqwSUYm_oZP65I"
+                         alt="Khóa học Vật lý" class="w-full h-52 object-cover rounded-t-2xl" />
+                    <div class="absolute top-4 left-4 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold">Vật lý</div>
+                </div>
+                <div class="p-6 flex-grow flex flex-col">
+                    <h3 class="text-xl font-bold mb-2 text-text-light dark:text-text-dark">Chuyên đề Vật lý 12</h3>
+                    <p class="text-text-muted-light dark:text-text-muted-dark mb-4 flex-grow">
+                        Đi sâu vào các chuyên đề khó như Sóng cơ, Dao động điện từ, Vật lý hạt nhân. Phù hợp cho học sinh mục tiêu 9+.
+                    </p>
+                    <div class="flex items-center text-text-muted-light dark:text-text-muted-dark text-sm mb-4">
+                        <span class="material-symbols-outlined text-base mr-2">schedule</span>
+                        <span>10 tuần</span>
+                        <span class="mx-3">|</span>
+                        <span class="material-symbols-outlined text-base mr-2">signal_cellular_alt</span>
+                        <span>Nâng cao</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <span class="text-2xl font-bold text-primary">2.200.000 VNĐ</span>
+                        <a href="#" class="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+
+            @* Khóa học 3 *@
+            <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-lg overflow-hidden flex flex-col group">
+                <div class="relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNbSbIUsIK0ExaFm0WcxykCMVnWqV-NgZFv3qBt5ggGfepqfvnSPxER5l_0SIUwEvzlz_RdWzpZVR8c0_ImKBrvEN-qxll9u3VlbWxocfUqipwA9cfFr6WJFx58egs78Wt2vqoYXBOidAk3fvMWo3ovmKEFceP3Pne_VAXYKuTbY3O7W7u1VRwqMYTBUGby4MUWXw1idM9g71eu_eXTdaUhylLCagHVFvdKhEbTQE-zJUY0lPdTSVuOtyB_n5anBvKMz52Me2Wl5w"
+                         alt="Khóa học Hóa học" class="w-full h-52 object-cover rounded-t-2xl" />
+                    <div class="absolute top-4 left-4 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold">Hóa học</div>
+                </div>
+                <div class="p-6 flex-grow flex flex-col">
+                    <h3 class="text-xl font-bold mb-2 text-text-light dark:text-text-dark">Nền tảng Hóa học Vô cơ</h3>
+                    <p class="text-text-muted-light dark:text-text-muted-dark mb-4 flex-grow">
+                        Hệ thống hóa kiến thức cơ bản về kim loại, phi kim, axit, bazơ và muối. Xây dựng nền tảng vững chắc cho các dạng bài phức tạp.
+                    </p>
+                    <div class="flex items-center text-text-muted-light dark:text-text-muted-dark text-sm mb-4">
+                        <span class="material-symbols-outlined text-base mr-2">schedule</span>
+                        <span>15 tuần</span>
+                        <span class="mx-3">|</span>
+                        <span class="material-symbols-outlined text-base mr-2">signal_cellular_alt</span>
+                        <span>Cơ bản</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <span class="text-2xl font-bold text-primary">1.800.000 VNĐ</span>
+                        <a href="#" class="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Button tải thêm -->
+        <div class="mt-16 text-center">
+            <button class="bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark px-8 py-3 rounded-lg font-semibold border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                Tải thêm khóa học
+            </button>
+        </div>
+            </div>
+        </section>

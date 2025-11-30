@@ -1,112 +1,173 @@
-﻿@model List<Web_KLCN.Models.HocVienLichThiVM>
-@{
-    ViewBag.Title = "Lịch thi của tôi";
-    Layout = "~/Views/Shared/LayoutPage2.cshtml";
-}
-
-<div class="container py-4 fade-in">
-
-    <h3 class="fw-bold mb-4" style="color:#1800AC;">Lịch thi của bạn</h3>
-
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info text-center py-4 rounded-4 shadow-sm">
-            <i class="fa-solid fa-circle-info me-2"></i>
-            Bạn hiện chưa có lịch thi nào.
-        </div>
+﻿@*@model List<Web_KLCN.Models.HocVienLichThiVM>
+    @{
+        ViewBag.Title = "Lịch thi của tôi";
+        Layout = "~/Views/Shared/LayoutPage.cshtml";
     }
-    else
-    {
-        <div class="row g-4">
-            @foreach (var item in Model)
-            {
-                <div class="col-md-6">
-                    <div class="exam-card shadow-sm rounded-4 border-0">
-                        <div class="card-body">
 
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="fw-bold text-dark">@item.TenDe</h5>
+    <div class="container py-4 fade-in">
+        <h3 class="fw-bold mb-4" style="color:#1800AC;">Lịch thi của bạn</h3>
 
-                                <span class="status-badge @(item.TrangThai == "Chưa thi" ? "status-pending" : item.TrangThai == "Đang thi" ? "status-doing" : "status-done")">
-                                    @item.TrangThai
-                                </span>
-                            </div>
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info text-center py-4 rounded-4 shadow-sm">
+                <i class="fa-solid fa-circle-info me-2"></i>
+                Bạn hiện chưa có lịch thi nào.
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+                @foreach (var item in Model)
+                {
+                    // Kiểm tra xem học viên đã có Kết Quả thi chưa
+                    bool hasKetQua = item.MaKQ.HasValue; // MaKQ sẽ null nếu chưa có KQ
 
-                            <!-- Môn học -->
-                            <p class="text-muted mb-1">
-                                <i class="fa-solid fa-book me-2 primary-icon"></i>
-                                <b>@item.MonHoc</b>
-                            </p>
+                    // Xác định trạng thái hiển thị
+                    string displayTrangThai = item.TrangThai;
 
-                            <div class="exam-info mt-3">
 
-                                <p class="mb-1">
-                                    <i class="fa-solid fa-calendar-day me-2 primary-icon"></i>
-                                    <b>Ngày thi:</b> @item.NgayThi.ToString("dd/MM/yyyy")
+                    <div class="col-md-6">
+                        <div class="exam-card shadow-sm rounded-4 border-0">
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="fw-bold text-dark">@item.TenDe</h5>
+
+                                    <span class="status-badge @(displayTrangThai == "Chưa băt đầu" ? "status-pending" : displayTrangThai == "Đang diễn ra" ? "status-doing" : "status-done")">
+                                        @displayTrangThai
+                                    </span>
+                                </div>
+
+                                <p class="text-muted mb-1">
+                                    <i class="fa-solid fa-book me-2 primary-icon"></i>
+                                    <b>@item.MonHoc</b>
                                 </p>
 
-                                <p class="mb-3">
-                                    <i class="fa-solid fa-clock me-2 primary-icon"></i>
-                                    <b>Thời gian:</b> @item.GioBatDau → @item.GioKetThuc
-                                </p>
-                            </div>
+                                <div class="exam-info mt-3">
+                                    <p class="mb-1">
+                                        <i class="fa-solid fa-calendar-day me-2 primary-icon"></i>
+                                        <b>Ngày thi:</b> @item.NgayThi.ToString("dd/MM/yyyy")
+                                    </p>
 
-                            <div class="d-flex justify-content-end">
-                                <a href="@Url.Action("LamBai", "HocVien", new { id = item.MaLT })"
-                                   class="btn btn-take-exam">
-                                    Vào thi <i class="fa-solid fa-arrow-right ms-2"></i>
-                                </a>
-                            </div>
+                                    <p class="mb-3">
+                                        <i class="fa-solid fa-clock me-2 primary-icon"></i>
+                                        <b>Thời gian:</b> @item.GioBatDau → @item.GioKetThuc
+                                    </p>
+                                </div>
 
+                                <div class="d-flex justify-content-end">
+                                    @if (displayTrangThai == "Đang diễn ra")
+                                    {
+                                        // === CHỐNG MUỘN GIỜ: chỉ cho vào trong 15 phút đầu kể từ giờ bắt đầu ===
+                                        var gioBatDauHomNay = DateTime.Today.Add(item.GioBatDau);
+                                        var gioiHanVaoThi = gioBatDauHomNay.AddMinutes(15);
+                                        var now = DateTime.Now;
+                                        if (hasKetQua)
+                                        {
+                                            if (item.TrangThaiLT == "Chưa nộp")
+                                            {
+                                                <a href="@Url.Action("LamBai", "HocVien", new { id = item.MaLT })"
+                                                   class="btn btn-take-exam">
+                                                    Tiếp tục thi <i class="fa-solid fa-arrow-right ms-2"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action("XemLaiBaiLam", "HocVien", new { id = item.MaKQ })"
+                                                   class="btn btn-take-exam btn-secondary">
+                                                    Xem kết quả <i class="fa-solid fa-eye ms-2"></i>
+                                                </a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (now <= gioiHanVaoThi)
+                                            {
+                                                <a href="@Url.Action("LamBai", "HocVien", new { id = item.MaLT })"
+                                                   class="btn btn-take-exam">
+                                                    Vào thi <i class="fa-solid fa-arrow-right ms-2"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-take-exam btn-disabled" disabled>Quá Hạn Thi</button>
+                                            }
+
+                                        }
+                                    }
+
+                                    else if (displayTrangThai == "Đã kết thúc")
+                                    {
+                                        if (hasKetQua)
+                                        {
+                                            <a href="@Url.Action("XemLaiBaiLam", "HocVien", new { id = item.MaKQ })"
+                                               class="btn btn-take-exam btn-secondary">
+                                                Xem kết quả <i class="fa-solid fa-eye ms-2"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-take-exam btn-disabled" disabled>Không tham gia thi</button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-take-exam btn-disabled" disabled>
+                                            @displayTrangThai
+                                        </button>
+                                    }
+                                </div>
+
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
-    }
-</div>
+                }
+            </div>
+        }
+    </div>
 
-<style>
-    /* Card */
-    .exam-card {
-        background: #ffffff;
-        padding: 22px;
-        transition: 0.25s ease;
-        border-radius: 20px;
-    }
 
-    .exam-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 30px rgba(0,0,0,0.12);
-    }
+    <style>
+        /* Card */
+        .exam-card {
+            background: #ffffff;
+            padding: 22px;
+            transition: 0.25s ease;
+            border-radius: 20px;
+        }
 
-    .primary-icon {
-        color: #1800AC !important;
-        font-size: 1rem;
-    }
+        .exam-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.12);
+        }
 
-    /* Badge trạng thái */
-    .status-badge {
-        padding: 6px 12px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
+        .primary-icon {
+            color: #1800AC !important;
+            font-size: 1rem;
+        }
 
-    .status-pending { background:#FFE599; color:#7A4E00; }
-    .status-doing { background:#D9E7FF; color:#004C99; }
-    .status-done { background:#C8FFD4; color:#006622; }
+        /* Badge trạng thái */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
 
-    /* Nút Vào thi */
-    .btn-take-exam {
-        background-color: #1800AC;
-        color: #fff;
-        padding: 8px 18px;
-        font-weight: 600;
-        border-radius: 12px;
-        transition: 0.2s;
-        border: none;
-    }
+        .status-pending { background:#FFE599; color:#7A4E00; }
+        .status-doing { background:#D9E7FF; color:#004C99; }
+        .status-done { background:#C8FFD4; color:#006622; }
+
+        /* Nút Vào thi / Xem kết quả / Chưa thi */
+        .btn-take-exam {
+            background-color: #1800AC;
+            color: #fff;
+            padding: 8px 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: 0.2s;
+            border: none;
+        }
 
         .btn-take-exam:hover {
             background: #130089;
@@ -114,13 +175,327 @@
             box-shadow: 0 6px 14px rgba(0,0,0,0.15);
         }
 
-    /* Fade-in */
-    .fade-in {
-        animation: fadeIn 0.5s ease-in-out;
+        .btn-disabled {
+            background-color: #ccc !important;
+            color: #666 !important;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        /* Fade-in */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>*@
+
+
+@*@model List<Web_KLCN.Models.HocVienLichThiVM>
+    @{
+        ViewBag.Title = "Lịch thi của tôi";
+        // Giả định: LayoutPage.cshtml đã tải Tailwind CSS và Daisy UI
+        Layout = "~/Views/Shared/LayoutPage.cshtml";
     }
 
-    keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
+    <div class="container mx-auto py-8 px-4 animate-fadeIn">
+        <h3 class="text-3xl font-bold mb-6 text-primary">
+            <span class="material-symbols-outlined align-middle me-2 text-2xl">event_list</span> Lịch thi của bạn
+        </h3>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info border border-blue-300 bg-blue-50 text-blue-800 text-center py-6 rounded-xl shadow-lg">
+                <span class="material-symbols-outlined text-3xl mb-2">info</span>
+                <p class="font-semibold mb-0">Bạn hiện chưa có lịch thi nào.</p>
+            </div>
+        }
+        else
+        {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @foreach (var item in Model)
+        {
+            // Kiểm tra xem học viên đã có Kết Quả thi chưa
+            bool hasKetQua = item.MaKQ.HasValue; // MaKQ sẽ null nếu chưa có KQ
+
+            // Xác định trạng thái hiển thị
+            string displayTrangThai = item.TrangThai;
+
+            string badgeClass;
+            if (displayTrangThai == "Chưa bắt đầu")
+            {
+                badgeClass = "badge-warning";
+            }
+            else if (displayTrangThai == "Đang diễn ra")
+            {
+                badgeClass = "badge-info";
+            }
+            else if (displayTrangThai == "Đã kết thúc")
+            {
+                badgeClass = "badge-success";
+            }
+            else
+            {
+                badgeClass = "badge-neutral";
+            }
+
+            <div class="card w-full bg-white dark:bg-surface-dark shadow-xl rounded-xl transition-transform duration-300 hover:scale-[1.01] hover:shadow-2xl">
+                <div class="card-body p-6">
+
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="text-xl font-bold text-text-light dark:text-text-dark max-w-[70%]">@item.TenDe</h4>
+                        <div class="badge @badgeClass text-sm font-semibold py-3 px-4">
+                            @displayTrangThai
+                        </div>
+                    </div>
+
+                    <p class="text-base text-primary font-medium mb-3">
+                        <span class="material-symbols-outlined align-bottom text-lg me-2">menu_book</span>
+                        <b>@item.MonHoc</b>
+                    </p>
+
+                    <div class="space-y-2 text-sm text-text-muted-light dark:text-text-muted-dark border-t border-gray-100 dark:border-gray-700 pt-4">
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined text-primary text-lg me-2">calendar_today</span>
+                            <b>Ngày thi:</b> <span class="ml-1 text-text-light dark:text-text-dark">@item.NgayThi.ToString("dd/MM/yyyy")</span>
+                        </div>
+
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined text-primary text-lg me-2">schedule</span>
+                            <b>Thời gian:</b> <span class="ml-1 text-text-light dark:text-text-dark">@item.GioBatDau → @item.GioKetThuc</span>
+                        </div>
+                    </div>
+
+                    <div class="card-actions justify-end mt-6">
+                        @if (displayTrangThai == "Đang diễn ra")
+                        {
+                            // === LOGIC XÁC ĐỊNH KHẢ NĂNG VÀO THI ===
+                            var gioBatDauHomNay = DateTime.Today.Add(item.GioBatDau);
+                            var gioiHanVaoThi = gioBatDauHomNay.AddMinutes(15);
+                            var now = DateTime.Now;
+
+                            if (hasKetQua)
+                            {
+                                if (item.TrangThaiLT == "Chưa nộp")
+                                {
+                                    // Tiếp tục thi
+                                    <a href="@Url.Action("LamBai", "HocVien", new { id = item.MaLT })"
+                                       class="btn btn-primary rounded-xl font-semibold normal-case">
+                                        Tiếp tục thi <span class="material-symbols-outlined text-base ms-1">arrow_forward</span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    // Đã nộp, xem kết quả
+                                    <a href="@Url.Action("XemLaiBaiLam", "HocVien", new { id = item.MaKQ })"
+                                       class="btn btn-neutral rounded-xl font-semibold normal-case">
+                                        Xem kết quả <span class="material-symbols-outlined text-base ms-1">visibility</span>
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                if (now <= gioiHanVaoThi)
+                                {
+                                    // Cho phép vào thi
+                                    <a href="@Url.Action("LamBai", "HocVien", new { id = item.MaLT })"
+                                       class="btn btn-primary rounded-xl font-semibold normal-case">
+                                        Vào thi <span class="material-symbols-outlined text-base ms-1">arrow_forward</span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    // Quá hạn vào thi
+                                    <button class="btn btn-disabled rounded-xl font-semibold normal-case" disabled>Quá Hạn Thi</button>
+                                }
+                            }
+                        }
+                        else if (displayTrangThai == "Đã kết thúc")
+                        {
+                            if (hasKetQua)
+                            {
+                                // Xem kết quả
+                                <a href="@Url.Action("XemLaiBaiLam", "HocVien", new { id = item.MaKQ })"
+                                   class="btn btn-neutral rounded-xl font-semibold normal-case">
+                                    Xem kết quả <span class="material-symbols-outlined text-base ms-1">visibility</span>
+                                </a>
+                            }
+                            else
+                            {
+                                // Không tham gia
+                                <button class="btn btn-disabled rounded-xl font-semibold normal-case" disabled>Không tham gia thi</button>
+                            }
+                        }
+                        else // Chưa bắt đầu (hoặc trạng thái khác)
+                        {
+                            <button class="btn btn-disabled rounded-xl font-semibold normal-case" disabled>
+                                @displayTrangThai
+                            </button>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+        }
+    </div>*@
+
+
+
+
+@model List<Web_KLCN.Models.HocVienLichThiVM>
+@{
+    ViewBag.Title = "Lịch thi của tôi";
+    // Giả định: LayoutPage.cshtml đã tải Tailwind CSS và Daisy UI
+    Layout = "~/Views/Shared/LayoutPage.cshtml";
+}
+
+<div class="container mx-auto py-8 px-4 animate-fadeIn">
+    <h3 class="text-3xl font-bold mb-6 text-primary">
+        <span class="material-symbols-outlined align-middle me-2 text-2xl">event_list</span> Lịch thi của bạn
+    </h3>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info border border-blue-300 bg-blue-50 text-blue-800 text-center py-6 rounded-xl shadow-lg">
+                <span class="material-symbols-outlined text-3xl mb-2">info</span>
+                <p class="font-semibold mb-0">Bạn hiện chưa có lịch thi nào.</p>
+            </div>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 justify-items-center gap-6">
+                @foreach (var item in Model)
+                {
+                    // ... (Logic C# Razor giữ nguyên)
+                    bool hasKetQua = item.MaKQ.HasValue;
+                    string displayTrangThai = item.TrangThai;
+
+                    // ... (Logic xác định badgeClass giữ nguyên)
+                    string badgeClass;
+                    if (displayTrangThai == "Chưa bắt đầu")
+                    {
+                        badgeClass = "badge-warning";
+                    }
+                    else if (displayTrangThai == "Đang diễn ra")
+                    {
+                        badgeClass = "badge-info";
+                    }
+                    else if (displayTrangThai == "Đã kết thúc")
+                    {
+                        badgeClass = "badge-success";
+                    }
+                    else
+                    {
+                        badgeClass = "badge-neutral";
+                    }
+
+                    <div class="card w-full bg-white dark:bg-surface-dark shadow-xl rounded-xl transition-transform duration-300 hover:scale-[1.01] hover:shadow-2xl">
+                        <div class="card-body p-4">
+
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-xl font-bold text-text-light dark:text-text-dark max-w-[70%]">@item.TenDe</h4>
+                                <span class="
+                                        px-3 py-1 rounded-lg text-sm font-semibold
+                                        @(
+                                            displayTrangThai == "Chưa bắt đầu" ? "bg-yellow-100 text-yellow-700" :
+                                            displayTrangThai == "Đang diễn ra" ? "bg-blue-100 text-blue-700" :
+                                            displayTrangThai == "Đã kết thúc" ? "bg-green-100 text-green-700" :
+                                            "bg-gray-100 text-gray-700"
+                                        )
+                                    ">
+                                    @displayTrangThai
+                                </span>
+                            </div>
+
+                            <p class="text-base text-primary font-medium mb-1">
+                                <span class="material-symbols-outlined align-bottom text-lg me-2">menu_book</span>
+                                <b>@item.MonHoc</b>
+                            </p>
+
+                            <div class="space-y-2 text-sm text-text-muted-light dark:text-text-muted-dark border-t border-gray-100 dark:border-gray-700 pt-2">
+                                <div class="flex items-center">
+                                    <span class="material-symbols-outlined text-primary text-lg me-2">calendar_today</span>
+                                    <b>Ngày thi:</b> <span class="ml-1 text-text-light dark:text-text-dark">@item.NgayThi.ToString("dd/MM/yyyy")</span>
+                                </div>
+
+                                <div class="flex items-center">
+                                    <span class="material-symbols-outlined text-primary text-lg me-2">schedule</span>
+                                    <b>Thời gian:</b> <span class="ml-1 text-text-light dark:text-text-dark">@item.GioBatDau → @item.GioKetThuc</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 w-full flex justify-end">
+                                @if (displayTrangThai == "Đang diễn ra")
+                                {
+                                    var gioBatDauHomNay = DateTime.Today.Add(item.GioBatDau);
+                                    var gioiHanVaoThi = gioBatDauHomNay.AddMinutes(15);
+                                    var now = DateTime.Now;
+
+                                    if (hasKetQua)
+                                    {
+                                        if (item.TrangThaiLT == "Chưa nộp")
+                                        {
+                                            <a href="@Url.Action("LamBai", "HocVien", new { id = item.MaLT })"
+                                               class="btn bg-[#1800AC] hover:bg-[#130089] text-white rounded-xl font-semibold normal-case min-w-[150px] px-4 py-2">
+                                                Tiếp tục thi <span class="material-symbols-outlined text-base ms-1">arrow_forward</span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("XemLaiBaiLam", "HocVien", new { id = item.MaKQ })"
+                                               class="btn bg-[#1800AC] hover:bg-[#130089] text-white rounded-xl font-semibold normal-case min-w-[150px] px-4 py-2">
+                                                Xem kết quả <span class="material-symbols-outlined text-base ms-1">visibility</span>
+                                            </a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (now <= gioiHanVaoThi)
+                                        {
+                                            <a href="@Url.Action("LamBai", "HocVien", new { id = item.MaLT })"
+                                               class="btn bg-[#1800AC] hover:bg-[#130089] text-white rounded-xl font-semibold normal-case min-w-[150px] px-4 py-2">
+                                                Vào thi <span class="material-symbols-outlined text-base ms-1">arrow_forward</span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-xl font-semibold normal-case cursor-not-allowed min-w-[150px] px-4 py-2" disabled>Quá Hạn Thi</button>
+                                        }
+                                    }
+                                }
+                                else if (displayTrangThai == "Đã kết thúc")
+                                {
+                                    if (hasKetQua)
+                                    {
+                                        <a href="@Url.Action("XemLaiBaiLam", "HocVien", new { id = item.MaKQ })"
+                                           class="btn bg-[#1800AC] hover:bg-[#130089] text-white rounded-xl font-semibold normal-case min-w-[150px] px-4 py-2">
+                                            Xem kết quả <span class="material-symbols-outlined text-base ms-1">visibility</span>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-xl font-semibold normal-case cursor-not-allowed min-w-[150px] px-4 py-2" disabled>Không tham gia thi</button>
+                                    }
+                                }
+                                else
+                                {
+                                    <button class="btn bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-xl font-semibold normal-case cursor-not-allowed min-w-[150px] px-4 py-2" disabled>
+                                        @displayTrangThai
+                                    </button>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>

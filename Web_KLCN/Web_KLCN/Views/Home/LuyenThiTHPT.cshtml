@@ -1,0 +1,196 @@
+﻿@{
+    ViewBag.Title = "Luyện thi THPT - TUQ Education";
+    Layout = "~/Views/Shared/LayoutPage.cshtml";
+}
+
+<!-- HERO SECTION -->
+<section class="flex flex-col max-w-6xl w-full mx-auto">
+    <div class="w-full">
+        <div class="flex min-h-[480px] flex-col gap-6 sm:gap-8 rounded-xl items-start justify-end px-6 pb-10 sm:px-10 bg-cover bg-center bg-no-repeat"
+             style='background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCIC7PdzwqoKD0LYRP9Hgwr2FBrsGhcQjpeqw3XWVsWURGQluAXIIuZ_LO8o4TwhVVcB4PWVOr01Wjm48pVfbpcEkgkRgvuLilXbPbfINN86GDYv0Pm6CRCm_7eYQa32oPFRvMZ9J-uQPPu32eaUvH20eLlldkeq2C5idjG4J3brTwu7anXGin3bFXFRir50zz1JHzjWR7Af647spiyp8Xmc-7I2rpW3lWkrOhB9FLxfFcDtXOrWR3Xpxw4NUntn1Iiv31Py-uj1ME");'
+             data-alt="A group of smiling high school students in a modern classroom, focused on their work.">
+                        <div class="flex flex-col gap-2 text-left max-w-3xl">
+                            <h1 class="text-white text-4xl font-black leading-tight sm:text-5xl">
+                                Chinh phục kỳ thi THPT Quốc gia cùng TUQ Education
+                            </h1>
+                            <h2 class="text-white/90 text-sm sm:text-base">
+                                Chương trình luyện thi toàn diện, bứt phá điểm số và đỗ vào đại học mơ ước.
+                            </h2>
+                        </div>
+
+                        <a href="@Url.Action("LienHe", "Home")"
+                           class="mt-6 flex min-w-[84px] max-w-[480px] items-center justify-center h-10 sm:h-12 px-4 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors">
+                            Đăng ký tư vấn
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WHY CHOOSE TUQ EDUCATION SECTION -->
+            <section class="py-12 sm:py-20">
+                <div class="max-w-4xl mx-auto px-4">
+                    <h2 class="text-[#111018] dark:text-white text-2xl sm:text-3xl font-bold mb-4 text-center">
+                        Tại sao chọn Luyện thi THPT Quốc gia tại TUQ Education?
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 text-center">
+                        Chúng tôi cam kết mang đến một môi trường học tập chất lượng cao, giúp học viên tự tin chinh phục mọi thử thách trong kỳ thi quan trọng.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-primary/10 dark:bg-primary/20 p-2 rounded-full mt-1">
+                                <span class="material-symbols-outlined text-lg text-primary">check</span>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-200">Lộ trình học cá nhân hóa</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-primary/10 dark:bg-primary/20 p-2 rounded-full mt-1">
+                                <span class="material-symbols-outlined text-lg text-primary">check</span>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-200">Giảng viên giàu kinh nghiệm</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-primary/10 dark:bg-primary/20 p-2 rounded-full mt-1">
+                                <span class="material-symbols-outlined text-lg text-primary">check</span>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-200">Tài liệu bám sát đề thi</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-primary/10 dark:bg-primary/20 p-2 rounded-full mt-1">
+                                <span class="material-symbols-outlined text-lg text-primary">check</span>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-200">Luyện tập với ngân hàng đề phong phú</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EXAM BANK SECTION -->
+            <section class="py-12 sm:py-20">
+                <div class="max-w-6xl mx-auto px-4">
+                    <div class="flex flex-col gap-8">
+                        <div class="text-center">
+                            <h2 class="text-[#111018] dark:text-white text-2xl sm:text-3xl font-bold leading-tight tracking-[-0.015em]">Kho đề thi thử THPT Quốc gia</h2>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Luyện tập với hàng ngàn câu hỏi chất lượng, bám sát cấu trúc đề thi thật để tự tin đạt điểm cao.</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-between items-center">
+                            <div class="relative w-full sm:max-w-xs">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                                <input class="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-primary transition-colors" placeholder="Tìm kiếm đề thi..." type="text" />
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label class="font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap" for="subject-filter">Lọc theo môn:</label>
+                                <select class="h-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-primary transition-colors" id="subject-filter">
+                                    <option>Tất cả</option>
+                                    <option>Toán học</option>
+                                    <option>Vật lý</option>
+                                    <option>Hóa học</option>
+                                    <option>Tiếng Anh</option>
+                                    <option>Sinh học</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="flex flex-col bg-white dark:bg-background-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-shadow hover:shadow-lg">
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start gap-4">
+                                        <h3 class="text-lg font-bold text-[#111018] dark:text-white leading-tight">Đề thi thử tốt nghiệp THPT 2024 môn Toán</h3>
+                                        <span class="text-xs font-semibold text-primary bg-primary/10 dark:bg-primary/20 px-2 py-1 rounded-full whitespace-nowrap">Toán học</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Đề thi bám sát cấu trúc mới nhất của Bộ GD&amp;ĐT, kèm đáp án và lời giải chi tiết.</p>
+                                </div>
+                                <div class="border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">schedule</span><span>120 phút</span></div>
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">description</span><span>50 câu</span></div>
+                                    <a class="font-bold text-primary hover:underline" href="#">Làm bài</a>
+                                </div>
+                            </div>
+                            <div class="flex flex-col bg-white dark:bg-background-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-shadow hover:shadow-lg">
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start gap-4">
+                                        <h3 class="text-lg font-bold text-[#111018] dark:text-white leading-tight">Đề thi thử tốt nghiệp THPT 2024 môn Vật lý</h3>
+                                        <span class="text-xs font-semibold text-primary bg-primary/10 dark:bg-primary/20 px-2 py-1 rounded-full whitespace-nowrap">Vật lý</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Tổng hợp các dạng bài tập hay xuất hiện trong đề thi, giúp học sinh làm quen và rèn luyện kỹ năng.</p>
+                                </div>
+                                <div class="border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">schedule</span><span>90 phút</span></div>
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">description</span><span>40 câu</span></div>
+                                    <a class="font-bold text-primary hover:underline" href="#">Làm bài</a>
+                                </div>
+                            </div>
+                            <div class="flex flex-col bg-white dark:bg-background-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-shadow hover:shadow-lg">
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start gap-4">
+                                        <h3 class="text-lg font-bold text-[#111018] dark:text-white leading-tight">Đề thi thử tốt nghiệp THPT 2024 môn Hóa học</h3>
+                                        <span class="text-xs font-semibold text-primary bg-primary/10 dark:bg-primary/20 px-2 py-1 rounded-full whitespace-nowrap">Hóa học</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Đề thi phân loại năng lực học sinh rõ rệt với các câu hỏi từ nhận biết đến vận dụng cao.</p>
+                                </div>
+                                <div class="border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">schedule</span><span>90 phút</span></div>
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">description</span><span>40 câu</span></div>
+                                    <a class="font-bold text-primary hover:underline" href="#">Làm bài</a>
+                                </div>
+                            </div>
+                            <div class="flex flex-col bg-white dark:bg-background-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-shadow hover:shadow-lg">
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start gap-4">
+                                        <h3 class="text-lg font-bold text-[#111018] dark:text-white leading-tight">Đề thi thử tốt nghiệp THPT 2024 môn Tiếng Anh</h3>
+                                        <span class="text-xs font-semibold text-primary bg-primary/10 dark:bg-primary/20 px-2 py-1 rounded-full whitespace-nowrap">Tiếng Anh</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Cập nhật các dạng bài mới, từ vựng và ngữ pháp trọng tâm theo định hướng của Bộ.</p>
+                                </div>
+                                <div class="border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">schedule</span><span>60 phút</span></div>
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">description</span><span>50 câu</span></div>
+                                    <a class="font-bold text-primary hover:underline" href="#">Làm bài</a>
+                                </div>
+                            </div>
+                            <div class="flex flex-col bg-white dark:bg-background-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-shadow hover:shadow-lg">
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start gap-4">
+                                        <h3 class="text-lg font-bold text-[#111018] dark:text-white leading-tight">Đề thi liên trường THPT Chuyên - môn Toán</h3>
+                                        <span class="text-xs font-semibold text-primary bg-primary/10 dark:bg-primary/20 px-2 py-1 rounded-full whitespace-nowrap">Toán học</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Đề thi có độ khó cao, dành cho học sinh mục tiêu 9+, tuyển chọn từ các trường chuyên hàng đầu.</p>
+                                </div>
+                                <div class="border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">schedule</span><span>120 phút</span></div>
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">description</span><span>50 câu</span></div>
+                                    <a class="font-bold text-primary hover:underline" href="#">Làm bài</a>
+                                </div>
+                            </div>
+                            <div class="flex flex-col bg-white dark:bg-background-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-shadow hover:shadow-lg">
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start gap-4">
+                                        <h3 class="text-lg font-bold text-[#111018] dark:text-white leading-tight">Đề thi thử chuyên đề Logarit - Mũ</h3>
+                                        <span class="text-xs font-semibold text-primary bg-primary/10 dark:bg-primary/20 px-2 py-1 rounded-full whitespace-nowrap">Toán học</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Tập trung vào chuyên đề khó, giúp học sinh nắm vững kiến thức và các dạng bài tập liên quan.</p>
+                                </div>
+                                <div class="border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">schedule</span><span>60 phút</span></div>
+                                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">description</span><span>30 câu</span></div>
+                                    <a class="font-bold text-primary hover:underline" href="#">Làm bài</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CALL TO ACTION SECTION -->
+            <section class="py-12 sm:py-20">
+                <div class="text-center max-w-3xl mx-auto px-4">
+                    <h2 class="text-[#111018] dark:text-white text-2xl sm:text-3xl font-bold">
+                        Sẵn sàng bứt phá điểm số?
+                    </h2>
+                    <p class="mt-4 text-gray-600 dark:text-gray-300">
+                        Đừng để kỳ thi THPT Quốc gia trở thành rào cản. Hãy để TUQ Education đồng hành cùng bạn.
+                    </p>
+                    <a href="@Url.Action("LienHe", "Home")"
+                       class="mt-8 flex min-w-[84px] max-w-[480px] items-center justify-center h-12 px-6 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors mx-auto">
+                        Đăng ký ngay
+                    </a>
+                </div>
+            </section>

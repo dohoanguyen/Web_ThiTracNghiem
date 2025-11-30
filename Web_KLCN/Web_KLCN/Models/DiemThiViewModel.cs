@@ -11,6 +11,6 @@ namespace Web_KLCN.Models
         public int SoCauDung { get; set; }      
         public int TongCau { get; set; }       
         public DateTime? NgayThi { get; set; }  
-        public string TrangThai { get; set; }   
+        public string TrangThai { get; set; }
     }
 }
